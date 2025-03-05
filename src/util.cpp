@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-// clips angle between range of (-180, 180]
+// clips angle between range of (-180, 180)
 double clipAngleto180degrees(double angle) {
     if (angle < 0) angle = 360 + angle;
     angle = fmod(angle, 360);

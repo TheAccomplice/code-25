@@ -1,3 +1,8 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
 {
     "configurations": [
         {
@@ -5,6 +10,11 @@
             "includePath": [
                 "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/include",
                 "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/src",
+                "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/Wire",
+                "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/Wire/utility",
+                "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/src/Main-Teensy/include",
+                "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/src/Main-Teensy/basic",
+                "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/src/Main-Teensy",
                 "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/cores/teensy4",
                 "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/ADC",
                 "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/AccelStepper/src",
@@ -97,22 +107,24 @@
                 "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/UTFT",
                 "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/VirtualWire",
                 "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/WS2812Serial",
-                "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/Wire",
-                "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/Wire/utility",
                 "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/XBee",
                 "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/XPT2046_Touchscreen",
                 "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/i2c_t3",
                 "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/ks0108",
                 "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/ssd1351",
                 "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/x10",
-                "",
-                "${workspaceFolder}/src/Main-Teensy/include"
+                ""
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
                     "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/include",
                     "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/src",
+                    "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/Wire",
+                    "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/Wire/utility",
+                    "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/src/Main-Teensy/include",
+                    "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/src/Main-Teensy/basic",
+                    "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/src/Main-Teensy",
                     "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/cores/teensy4",
                     "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/ADC",
                     "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/AccelStepper/src",
@@ -205,8 +217,6 @@
                     "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/UTFT",
                     "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/VirtualWire",
                     "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/WS2812Serial",
-                    "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/Wire",
-                    "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/Wire/utility",
                     "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/XBee",
                     "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/XPT2046_Touchscreen",
                     "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/i2c_t3",

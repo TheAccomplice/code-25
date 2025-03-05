@@ -1,5 +1,4 @@
 #include "movement.h"
-#include "config.h"
 #include "vector.h"
 #include "util.h"
 
