@@ -18,4 +18,14 @@ void printDouble(Stream &serial, double value, uint8_t integerPlaces,
 
 void i2cscanner();
 
+struct SensorValues {
+
+    int onLine = 0;
+    float angleBisector;
+    float depthinLine;
+
+};
+
+extern SensorValues sensorValues;
+
 #endif

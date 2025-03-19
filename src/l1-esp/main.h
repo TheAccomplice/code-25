@@ -10,6 +10,8 @@
 
 void selectMUXChannel(uint8_t channel);
 int readMUXChannel(int index);
+void getValues();
+void findLine();
 
 struct LightArray {
     float RAWLDRVALUES[LDRPINCOUNT] = {
@@ -24,7 +26,8 @@ struct LightArray {
         60.0, 84.0, 108.0, 132.0, 156.0}; // assuming placement of ldrs is constant
     
     float LDRThresholds[LDRPINCOUNT] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  
-                                        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+                                        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};    
+                                        //assumes threshold is measured
 
     double maxRecordedValue[LDRPINCOUNT] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  
                                             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
@@ -38,5 +41,6 @@ struct LightArray {
     double highValues[LDRPINCOUNT] = {3.30, 3.30, 3.30, 3.30, 3.30, 3.30, 3.30, 3.30,  
                                       3.30, 3.30, 3.30, 3.30, 3.30, 3.30, 3.30};
 };
+
 
 #endif
