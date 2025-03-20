@@ -8,18 +8,23 @@
 #include "util.h"
 
 extern LightArray lightArray;
+SensorValues sensorValues;
 
 void setup() {
-  Serial.begin(9600);  // Initialize serial communication at 9600 baud rate
-  while (!Serial);     // Wait for the serial connection to be established
-  Serial.println("Starting LDR value read...");
-  pinMode(9, OUTPUT);
-  pinMode(8, OUTPUT);
-  pinMode(4, OUTPUT);
-  pinMode(5, OUTPUT);
+  Serial.begin(115200);  // Initialize serial communication at 9600 baud rate
+  Serial3.begin(115200, SERIAL_8N1, 7, 6);
 }
 
 void loop() {
+  findLine();
+
+  Serial3.write((byte*)&sensorValues, sizeof(sensorValues));
+
+  delay(100);
+
+
+
+  #ifdef DEBUG
   getValues();
   for (int i = 0; i < LDRPINCOUNT; i++) {
 
@@ -32,4 +37,5 @@ void loop() {
   Serial.println("Hi");
 
   delay(5000);  // Wait for 1 second before reading again
+  #endif
 }

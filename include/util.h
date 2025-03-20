@@ -26,6 +26,4 @@ struct SensorValues {
 
 };
 
-extern SensorValues sensorValues;
-
 #endif

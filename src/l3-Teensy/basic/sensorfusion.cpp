@@ -1,13 +1,13 @@
-#include "sensorfusion.h"
+#include "SensorFusion.h"
 
 // constructor: initializes the kalman filter with predefined matrices
-Sensorfusion::Sensorfusion() : kf(A, B, Q, R, I, H) {
+SensorFusion::SensorFusion() : kf(A, B, Q, R, I, H) {
     kf.updateConstants(A, B, Q, R, I, H);
     kf.initialize(x_hat, P, K);
 }
 
 // updates the kalman filter matrices based on sensor variances
-void Sensorfusion::updateConstants(double frontVariance, double backVariance,
+void SensorFusion::updateConstants(double frontVariance, double backVariance,
                                    double leftVariance, double rightVariance,
                                    double x_camVariance, double y_camVariance) {
     // state transition matrix (A)
@@ -68,7 +68,7 @@ void Sensorfusion::updateConstants(double frontVariance, double backVariance,
 }
 
 // updates sensor values and performs kalman filter prediction/correction
-void Sensorfusion::updateSensorValues(int flpwm, int frpwm, int blpwm,
+void SensorFusion::updateSensorValues(int flpwm, int frpwm, int blpwm,
                                       int brpwm, int frontTof, int backTof,
                                       int leftTof, int rightTof, int x_camera,
                                       int y_camera) {
@@ -92,7 +92,7 @@ void Sensorfusion::updateSensorValues(int flpwm, int frpwm, int blpwm,
 }
 
 // updates and returns the estimated position as a vector
-Vector Sensorfusion::updateLocalisation() {
+Vector SensorFusion::updateLocalisation() {
     Eigen::VectorXd state = kf.updateState();
 
     Point location;

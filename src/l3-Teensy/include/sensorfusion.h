@@ -12,9 +12,9 @@
 #include "util.h"
 
 // sensor fusion class for integrating multiple sensor inputs
-class Sensorfusion {
+class SensorFusion {
   public:
-    Sensorfusion(); // constructor
+    SensorFusion(); // constructor
     Vector updateLocalisation(); // updates the robot's localization based on sensor data
     void updateSensorValues(int flpwm, int frpwm, int blpwm, int brpwm,
                             int frontTof, int backTof, int leftTof,

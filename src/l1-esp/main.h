@@ -13,6 +13,7 @@ int readMUXChannel(int index);
 void getValues();
 void findLine();
 
+
 struct LightArray {
     float RAWLDRVALUES[LDRPINCOUNT] = {
         5.00, 5.00, 5.00, 5.00, 5.00, 5.00, 5.00, 5.00, 5.00, 5.00, 5.00, 5.00,
