@@ -12,6 +12,7 @@ void setup() {
 }
 
 void loop() {
+    Serial.print(readIMUHeading());
     Vector ballPos = ballPosition.updatePosition();
     Vector botPos = sensorFusion.updateLocalisation();
     Serial2.print(ballPos.x);  
