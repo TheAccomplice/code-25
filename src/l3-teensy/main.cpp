@@ -1,8 +1,8 @@
 #include <Arduino.h>
-#include "ballposition.h"
+#include "include/ballposition.h"
 
 BallPosition ballPosition;
-SesorFusion sensorFusion;
+SensorFusion sensorFusion;
 
 void setup() {
     Serial.begin(115200);  

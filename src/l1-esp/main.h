@@ -1,5 +1,6 @@
 #ifndef MAIN_H
 #define MAIN_H
+#include "util.h"
 
 #define S0           9
 #define S1           8
@@ -43,5 +44,8 @@ struct LightArray {
                                       3.30, 3.30, 3.30, 3.30, 3.30, 3.30, 3.30};
 };
 
+//global variables 
+extern LightArray lightArray;
+extern SensorValues sensorValues;
 
 #endif

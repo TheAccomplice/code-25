@@ -1,5 +1,5 @@
 #include <Arduino.h>
-
+#include "HardwareSerial.h"
 #include <array>
 
 #include "PacketSerial.h"
@@ -7,18 +7,19 @@
 //#include "movement.h"
 #include "util.h"
 
-extern LightArray lightArray;
+
+LightArray lightArray; //need to define them in .cpp folder
 SensorValues sensorValues;
 
 void setup() {
   Serial.begin(115200);  // Initialize serial communication at 9600 baud rate
-  Serial3.begin(115200, SERIAL_8N1, 7, 6);
+  Serial0.begin(115200, SERIAL_8N1, 7, 6); // esp32 only has UART0
 }
 
 void loop() {
   findLine();
 
-  Serial3.write((byte*)&sensorValues, sizeof(sensorValues));
+  Serial0.write((byte*)&sensorValues, sizeof(sensorValues));
 
   delay(100);
 

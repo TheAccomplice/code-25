@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "util.h"
+#include "main.h"
 
 Vector goalPos = {61.5, 0};
 
@@ -12,6 +13,7 @@ Vector receivedBallPos;
 Vector receivedBotPos;   
 
 SensorValues receivedSensorValues;
+Movement movement; // need to define this in .cpp file
 
 #define BALL_POSSESSION_THRESHOLD 10.0  // How close to ball to possess
 #define GOAL_APPROACH_THRESHOLD 20.0    // How far from goal before shoot
@@ -19,8 +21,8 @@ SensorValues receivedSensorValues;
 
 void setup() {
     Serial.begin(115200); 
-    Serial2.begin(115200, SERIAL_8N1, 0, 1);
-    Serial3.begin(115200, SERIAL_8N1, 21, 20);
+    Serial2.begin(115200);
+    Serial3.begin(115200);
 }
 
 void loop() {

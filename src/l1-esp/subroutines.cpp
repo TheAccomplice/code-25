@@ -5,7 +5,7 @@
 #include "PacketSerial.h"
 #include "main.h"
 //#include "movement.h"
-#include "util.h"
+//#include "util.h"
 
 void selectMUXChannel(uint8_t channel) {
     digitalWrite(S0, channel & 1);
@@ -18,7 +18,6 @@ int readMUXChannel(int index) {
     return analogRead(0);
 }
 
-LightArray lightArray;
 
 
 void getValues() {

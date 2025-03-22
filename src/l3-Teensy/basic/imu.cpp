@@ -1,4 +1,7 @@
 #include "imu.h"
+Adafruit_BNO08x bno;
+Eigen::Quaterniond initialRotationOffset = Eigen::Quaterniond::Identity();
+
 void setupIMU() {
     // Initialise IMU
 
