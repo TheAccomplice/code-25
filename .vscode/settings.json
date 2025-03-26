@@ -1,6 +1,7 @@
 {
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
-        "bno085": "cpp"
+        "bno085": "cpp",
+        "cmath": "cpp"
     }
 }

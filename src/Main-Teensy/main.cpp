@@ -1,109 +1,125 @@
+#ifndef MOVEMENT_H
+#define MOVEMENT_H
+
 #include <Arduino.h>
-#include "util.h"
-#include "main.h"
+#include <vector>
 
-Vector goalPos = {61.5, 0};
+#include "pid.h"
+#include "vector.h"  // Assuming this includes the Vector class we created earlier
 
-struct Vector {
-    float x;
-    float y;
+#define ANGULAR_SCALE 1.3
+
+namespace Direction {
+
+// Move in a specific direction
+struct Constant {
+  double value;
+};
+struct MoveToPoint {
+  Vector robotCoordinate;
+  Point destination;
+};
+struct LineTrack {
+  // Depth at which robot is tracking a line, adjusted to stay on the line
+  double lineDepth;
+  double angleBisector;
+  double targetLineDepth = 0.5;
+  bool trackLeftwards = true;  // Track left of an angle bisector from the line
+};
+}  // namespace Direction
+
+namespace Velocity {
+struct Constant {
+  double value;
+};
+struct StopAtPoint {
+  double errorDistance;
+  double minSpeed;
+  double maxSpeed;
+};
+}  // namespace Velocity
+
+namespace Bearing {
+struct Constant {
+  double targetValue;
+  double actualBearing;
+};
+struct MoveBearingToPoint {
+  Vector robotCoordinate;
+  Point destination;
+  double finalBearing;
+};
+struct Absolute {
+  double angle;
+};
+}  // namespace Bearing
+
+class Movement {
+ public:
+  Movement();
+
+  void updateParameters(double actualBearing, double actualDirection,
+                        double actualVelocity);
+
+  void initialize();
+  // Set relevant parameters
+  void setConstantDirection(Direction::Constant params);
+  void setMoveToPointDirection(Direction::MoveToPoint params);
+  void setLineTrackDirection(Direction::LineTrack params);
+
+  void setConstantVelocity(Velocity::Constant params);
+  void setStopAtPointVelocity(Velocity::StopAtPoint params);
+
+  void setConstantBearing(Bearing::Constant params);
+  void setMoveBearingToPoint(Bearing::MoveBearingToPoint params);
+  void setBearingSettings(double min, double max, double KP, double KD,
+                          double KI);
+
+  // PID Controllers
+  PID bearingController = PID(0.0, -600, 600, 4, 40, 0.0, 1);
+  PID directionController = PID(0.0, -90, 90, 1.5, 0, 0, 1);
+  PID stopAtPointController = PID(0.0, -360, 360, 1.5, 0.01, 0.1, 1);
+  PID lineTrackController = PID(0.0, -0.3, 0.3, 0.5, 0, 0, 1);
+
+  void drive(Point robotPosition);
+  double applySigmoid(double startSpeed, double endSpeed, double progress,
+                      double constant);
+
+  std::vector<double> getMotorValues();
+
+  // Add the missing setBearing method to set _lastBearing
+  void setBearing(double bearing) { _lastBearing = bearing; }
+
+ private:
+  // Parameters
+  double _targetDirection;
+  double _targetBearing;
+  double _targetVelocity;
+
+  // Actual moving parameters
+  double _movingDirection;
+  double _movingBearing;
+  double _movingVelocity;
+
+  // Past values
+  double _lastDirection;
+  double _lastBearing;
+  double _lastVelocity;
+
+  // For Bearing::MoveBearingToPoint and MoveToPoint
+  Point _finalDestination;
+  double _initialBearing;
+  double _finalBearing;
+  Vector _initialRobotCoordinate;
+
+  // Actual parameters
+  double _actualVelocity;
+  double _actualBearing;
+  double _actualDirection;
+
+  // Additional movement logic
+  void adjustBearing();
+  void trackLine();
 };
 
-Vector receivedBallPos;  
-Vector receivedBotPos;   
-
-SensorValues receivedSensorValues;
-Movement movement; // need to define this in .cpp file
-
-#define BALL_POSSESSION_THRESHOLD 10.0  // How close to ball to possess
-#define GOAL_APPROACH_THRESHOLD 20.0    // How far from goal before shoot
-#define ESCAPE_TURN_ANGLE 90  
-
-void setup() {
-    Serial.begin(115200); 
-    Serial2.begin(115200);
-    Serial3.begin(115200);
-}
-
-void loop() {
-    if (Serial2.available()) {
-        // Read the ball position
-        String ballData = Serial2.readStringUntil(',');
-        receivedBallPos.x = ballData.toFloat();
-
-        ballData = Serial2.readStringUntil(',');
-        receivedBallPos.y = ballData.toFloat();
-
-        // Read the bot position (x and y)
-        String botData = Serial2.readStringUntil(',');
-        receivedBotPos.x = botData.toFloat();
-
-        botData = Serial2.readStringUntil('\n');
-        receivedBotPos.y = botData.toFloat();
-
-        #ifdef DEBUG
-        Serial.print("Received Ball Position X: ");
-        Serial.print(receivedBallPos.x);
-        Serial.print(" Y: ");
-        Serial.println(receivedBallPos.y);
-
-        Serial.print("Received Bot Position X: ");
-        Serial.print(receivedBotPos.x);
-        Serial.print(" Y: ");
-        Serial.println(receivedBotPos.y);
-        #endif
-    }
-
-    if (Serial3.available() >= sizeof(receivedSensorValues)) {
-        Serial3.readBytes((char*)&receivedSensorValues, sizeof(receivedSensorValues));
-    }
-
-    if (receivedSensorValues.onLine >= 1) {
-        // Line detected
-        movement.setconstantVelocity(Velocity::constant{0});
-
-        // Escape
-        double escapeBearing = receivedSensorValues.angleBisector + ESCAPE_TURN_ANGLE;
-        escapeBearing = clipAngleto180degrees(escapeBearing);
-
-        movement.setbearing(Bearing::absolute{escapeBearing});
-        movement.setconstantVelocity(Velocity::constant{400});  // Move away
-    } 
-    else{
-      // Distance from robot to ball
-      double distanceToBall = sqrt(pow(receivedBallPos.x - receivedBotPos.x, 2) + pow(receivedBallPos.y - receivedBotPos.y, 2));
-
-      // Check if the robot has possession of the ball
-      if (distanceToBall < BALL_POSSESSION_THRESHOLD) {
-          // Robot has possession of the ball
-
-          // Turn to goal and lock on to it
-          double goalBearing = atan2(goalPos.y - receivedBotPos.y, goalPos.x - receivedBotPos.x) * 180 / PI;
-          movement.setbearing(Bearing::absolute{goalBearing});  // Face towards the goal
-
-          double distanceToGoal = (goalPos - receivedBotPos).distance;
-
-          if (distanceToGoal > GOAL_APPROACH_THRESHOLD) {
-              // Drive to goal
-              movement.setmovetoPointDirection(Direction::movetoPoint{goalPos, receivedBotPos});
-              movement.setconstantVelocity(Velocity::constant{600});  
-          } else {
-              // Near to goal, stop promptly to "shoot"
-              movement.setconstantVelocity(Velocity::constant{0});  
-          }
-      } else {
-          //No possession of ball, face ball and drive towards it
-          double ballBearing = atan2(receivedBallPos.y - receivedBotPos.y, receivedBallPos.x - receivedBotPos.x) * 180 / PI;
-          movement.setbearing(Bearing::absolute{ballBearing});
-
-          movement.setmovetoPointDirection(Direction::movetoPoint{receivedBallPos, receivedBotPos});
-          movement.setconstantVelocity(Velocity::constant{400});
-      }
-    }
-
-    movement.drive(receivedBotPos);
-
-
-    delay(100);
-}
-
+#endif

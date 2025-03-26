@@ -2,7 +2,6 @@
 #define MAIN_H
 
 #include <Arduino.h>
-#include <ArduinoEigenDense.h>
 #include <array>
 #include "PacketSerial.h"
 #include "config.h"

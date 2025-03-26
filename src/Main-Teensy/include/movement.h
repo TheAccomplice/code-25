@@ -2,123 +2,126 @@
 #define MOVEMENT_H
 
 #include <Arduino.h>
-
 #include <vector>
 
 #include "pid.h"
-#include "vector.h"
+#include "vector.h"  // Assuming this includes the Vector class we created earlier
 
 #define ANGULAR_SCALE 1.3
 
+// Define the Point struct
+struct Point {
+  double x;
+  double y;
+};
+
 namespace Direction {
 
-//move in a specific directionon
-struct constant {
-    double value;
+// Move in a specific direction
+struct Constant {
+  double value;
 };
-struct movetoPoint {
-    Vector robotCoordinate;
-    Point destination;
+struct MoveToPoint {
+  Vector robotCoordinate;
+  Point destination;
 };
-struct linetrack {
-    //depth at which robot is tracking a line, adjusted to stay on the line
-    double lineDepth;
-    double angleBisector;
-    double targetLineDepth = 0.5;
-    bool trackLeftwards = true; // track left of an angle bisector from the
-                                // line facing into the field
+struct LineTrack {
+  // Depth at which robot is tracking a line, adjusted to stay on the line
+  double lineDepth;
+  double angleBisector;
+  double targetLineDepth = 0.5;
+  bool trackLeftwards = true;  // Track left of an angle bisector from the line
 };
-} // namespace Direction
+}  // namespace Direction
 
 namespace Velocity {
-struct constant {
-    double value;
+struct Constant {
+  double value;
 };
-struct stopatPoint {
-    double errordistance;
-    double minSpeed;
-    double maxSpeed;
+struct StopAtPoint {
+  double errorDistance;
+  double minSpeed;
+  double maxSpeed;
 };
-} // namespace Velocity
+}  // namespace Velocity
 
 namespace Bearing {
-struct constant {
-    double targetValue;
-    double actualBearing;
+struct Constant {
+  double targetValue;
+  double actualBearing;
 };
-struct moveBearingtoPoint {
-    Vector robotCoordinate;
-    Point destination;
-    double finalBearing;
+struct MoveBearingToPoint {
+  Vector robotCoordinate;
+  Point destination;
+  double finalBearing;
 };
-} // namespace Bearing
+struct Absolute {
+  double angle;
+};
+}  // namespace Bearing
 
 class Movement {
-  public:
-    Movement();
+ public:
+  Movement();
 
-    void updateParameters(double actualbearing, double actualdirection,
-                          double actualvelocity);
+  void updateParameters(double actualBearing, double actualDirection,
+                        double actualVelocity);
 
-    void initialize();
-    // set relavent parameters
-    void setconstantDirection(Direction::constant params);
-    void setmovetoPointDirection(Direction::movetoPoint params);
-    void setlinetrackDirection(Direction::linetrack params);
+  void initialize();
+  // Set relevant parameters
+  void setConstantDirection(Direction::Constant params);
+  void setMoveToPointDirection(Direction::MoveToPoint params);
+  void setLineTrackDirection(Direction::LineTrack params);
 
-    void setconstantVelocity(Velocity::constant params);
-    void setstopatPointVelocity(Velocity::stopatPoint params);
+  void setConstantVelocity(Velocity::Constant params);
+  void setStopAtPointVelocity(Velocity::StopAtPoint params);
 
-    void setconstantBearing(Bearing::constant params);
-    void setmoveBearingtoPoint(Bearing::moveBearingtoPoint params);
-    void setBearingSettings(double min, double max, double KP, double KD,
-                            double KI);
+  void setConstantBearing(Bearing::Constant params);
+  void setMoveBearingToPoint(Bearing::MoveBearingToPoint params);
+  void setBearingSettings(double min, double max, double KP, double KD,
+                          double KI);
 
-    // PID Controllera
-    PID bearingController =
-        PID(0.0, -600, 600, 4, 40, 0.0, 1);
+  // PID Controllers
+  PID bearingController = PID(0.0, -600, 600, 4, 40, 0.0, 1);
+  PID directionController = PID(0.0, -90, 90, 1.5, 0, 0, 1);
+  PID stopAtPointController = PID(0.0, -360, 360, 1.5, 0.01, 0.1, 1);
+  PID lineTrackController = PID(0.0, -0.3, 0.3, 0.5, 0, 0, 1);
 
-    PID directionController =
-        PID(0.0, -90, 90, 1.5, 0, 0, 1);
+  void drive(Point robotPosition);
+  double applySigmoid(double startSpeed, double endSpeed, double progress,
+                      double constant);
 
-    PID stopatPointController = 
-        PID(0.0, -360, 360, 1.5, 0.01, 0.1, 1); // not yet implemented?
+  std::vector<double> getMotorValues();
 
-    PID linetrackController = 
-        PID(0.0, -0.3, 0.3, 0.5, 0, 0, 1); // not yet implemented?
+  // Add the missing setBearing method to set _lastBearing
+  void setBearing(double bearing) { _lastBearing = bearing; }
 
-    void drive(Point robotPosition);
-    double applySigmoid(double startSpeed, double endSpeed, double progress,
-                        double constant);
+ private:
+  // Parameters
+  double _targetDirection;
+  double _targetBearing;
+  double _targetVelocity;
 
-    std::vector<double> getmotorValues();
+  // Actual moving parameters
+  double _movingDirection;
+  double _movingBearing;
+  double _movingVelocity;
 
-  private:
-    // parameters
-    double _targetdirection;
-    double _targetbearing;
-    double _targetvelocity;
+  // Past values
+  double _lastDirection;
+  double _lastBearing;
+  double _lastVelocity;
 
-    //
-    double _movingdirection;
-    double _movingbearing;
-    double _movingvelocity;
+  // For Bearing::MoveBearingToPoint and MoveToPoint
+  Point _finalDestination;
+  double _initialBearing;
+  double _finalBearing;
+  Vector _initialRobotCoordinate;
 
-    // past values
-    double _lastdirection;
-    double _lastbearing;
-    double _lastvelocity;
-
-    // for Bearing::moveBearingtoPoint and \movetoPoint
-    Point _finalDestination;
-    double _initialbearing;
-    double _finalbearing;
-    Vector _initialrobotcoordinate;
-
-    // actual parameters
-    double _actualvelocity;
-    double _actualbearing;
-    double _actualdirection;
+  // Actual parameters
+  double _actualVelocity;
+  double _actualBearing;
+  double _actualDirection;
 };
 
 #endif

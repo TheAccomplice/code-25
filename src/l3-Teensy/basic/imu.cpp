@@ -1,4 +1,9 @@
 #include "imu.h"
+#include <Arduino.h> // Include Arduino.h for digitalWrite, delay, PIN_LED_BUILTIN
+#include <Adafruit_BNO08x.h>
+#include <Eigen/Geometry>
+#include <math.h>
+
 Adafruit_BNO08x bno;
 Eigen::Quaterniond initialRotationOffset = Eigen::Quaterniond::Identity();
 
@@ -43,16 +48,15 @@ double readIMUHeading() {
             };
 
             // Set the initial offset if it hasn't been set
-            if (initialRotationOffset == Eigen::Quaterniond::Identity())
+            if (initialRotationOffset.isApprox(Eigen::Quaterniond::Identity())) { // Use isApprox for comparison
                 initialRotationOffset = rotation.inverse();
+            }
 
             // Compute the robot angle
             const auto correctedRotation = initialRotationOffset * rotation;
             const auto rotationMatrix = correctedRotation.toRotationMatrix();
             const auto yaw = -atan2(rotationMatrix(1, 0), rotationMatrix(0, 0));
             return degrees(yaw);
-
-            break;
         }
         default:
             break;
@@ -60,4 +64,8 @@ double readIMUHeading() {
     }
 
     return NAN;
+}
+
+double degrees(double radians){
+    return radians * 180.0 / M_PI;
 }
