@@ -3,17 +3,12 @@ Adafruit_BNO08x bno;
 Eigen::Quaterniond initialRotationOffset = Eigen::Quaterniond::Identity();
 
 void setupIMU() {
-    // Initialise IMU
+    // Initialise IMU2
 
     if (!bno.begin_I2C()) {
         Serial.println("Failed to find BNO085!!");
         // Blink the debug LED on failure
-        while (1) {
-            digitalWrite(PIN_LED_BUILTIN, HIGH);
-            delay(100);
-            digitalWrite(PIN_LED_BUILTIN, LOW);
-            delay(100);
-        }
+        
     }
     // TODO: try SH2_ROTATION_VECTOR, SH2_GYRO_INTEGRATED_RV
     // The SH2_GAME_ROTATION_VECTOR mode uses fusion of gyroscope and
@@ -21,12 +16,7 @@ void setupIMU() {
     if (!bno.enableReport(SH2_GAME_ROTATION_VECTOR)) {
         Serial.println("Could not enable game rotation vector!!");
         // Blink the debug LED on failure
-        while (1) {
-            digitalWrite(PIN_LED_BUILTIN, HIGH);
-            delay(100);
-            digitalWrite(PIN_LED_BUILTIN, LOW);
-            delay(100);
-        }
+
     }
 }
 

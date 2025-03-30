@@ -18,7 +18,7 @@ struct ProcessedValues {
     int yellow_goal_exists = 0;              // flag to indicate if yellow goal is detected
     int blue_goal_exists = 0;                // flag to indicate if blue goal is detected
     int lidar_distance[4];                   // array to store lidar distances
-    double lidar_confidence[4];              // array to store lidar confidence levels
+    double lidar_confidence[4] = {};              // array to store lidar confidence levels
     int relative_bearing;                    // robot's relative bearing
     Point robot_position;                     // position of the robot
 };

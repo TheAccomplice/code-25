@@ -2,15 +2,9 @@
 #include "util.h"
 #include "main.h"
 
-Vector goalPos = {61.5, 0};
-
-struct Vector {
-    float x;
-    float y;
-};
-
-Vector receivedBallPos;  
-Vector receivedBotPos;   
+Point goalPos = {61.5, 0};
+Point receivedBallPos;  
+Point receivedBotPos;   
 
 SensorValues receivedSensorValues;
 Movement movement; // need to define this in .cpp file

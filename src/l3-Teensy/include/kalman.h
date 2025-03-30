@@ -2,7 +2,8 @@
 #define KALMAN_H
 
 #include <ArduinoEigenDense.h>
-
+#undef _B
+#undef _P
 class KalmanFilter {
   public:
     // constructor initializes kalman filter with given matrices

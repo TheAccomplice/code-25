@@ -2,10 +2,11 @@
 #define MAIN_H
 #include "util.h"
 
-#define S0           9
-#define S1           8
-#define S2           4
-#define S3           5
+#define S0           D9
+#define S1           D8
+#define S2           D4
+#define S3           D5
+#define M1           A0
 
 #define LDRPINCOUNT 15
 

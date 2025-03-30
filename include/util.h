@@ -18,7 +18,7 @@ void printDouble(Stream &serial, double value, uint8_t integerPlaces,
 
 void i2cscanner();
 
-struct SensorValues {
+struct SensorValues1 {
 
     int onLine = 0;
     float angleBisector;
