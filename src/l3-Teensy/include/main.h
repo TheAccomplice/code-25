@@ -1,72 +1,71 @@
 #ifndef MAIN_H
 #define MAIN_H
-
 #include <Arduino.h>
+#include <ArduinoEigenDense.h>
+
 #include <array>
+
 #include "PacketSerial.h"
 #include "config.h"
 #include "util.h"
 #include "vector.h"
 
-// structure to store processed sensor values
 struct ProcessedValues {
-    Vector ball_relative_position;          // position of the ball relative to the robot
-    Vector yellow_goal_relative_position;   // position of the yellow goal relative to the robot
-    Vector blue_goal_relative_position;     // position of the blue goal relative to the robot
-    int ball_exists = 0;                     // flag to indicate if ball is detected
-    int yellow_goal_exists = 0;              // flag to indicate if yellow goal is detected
-    int blue_goal_exists = 0;                // flag to indicate if blue goal is detected
-    int lidar_distance[4];                   // array to store lidar distances
-    double lidar_confidence[4];              // array to store lidar confidence levels
-    int relative_bearing;                    // robot's relative bearing
-    Point robot_position;                     // position of the robot
+    Vector ball_relativeposition;
+    Vector yellowgoal_relativeposition;
+    Vector bluegoal_relativeposition;
+    int ballExists = 0;
+    int yellowgoal_exists = 0;
+    int bluegoal_exists = 0;
+    int lidarDistance[4];
+    double lidarConfidence[4];
+    int relativeBearing;
+    Point robot_position;
 };
 
-// structure to store raw sensor values
 struct SensorValues {
-    int relative_bearing;                    // robot's relative bearing
-    Vector yellow_goal_relative_position;    // position of the yellow goal relative to the robot
-    Vector blue_goal_relative_position;      // position of the blue goal relative to the robot
-    Vector ball_relative_position;           // position of the ball relative to the robot
-    int lidar_distance[4];                   // array to store lidar distances
+    int relativeBearing;
+    Vector yellowgoal_relativeposition;
+    Vector bluegoal_relativeposition;
+    Vector ball_relativeposition;
+    int lidardist[4];
 };
 
-// global sensor value structures
+
 extern SensorValues sensorValues;
 extern ProcessedValues processedValues;
 
-// structure for data transmission between teensy boards
-struct TeensyToTeensyTxPayload {
-    ProcessedValues processed_values;
+
+struct teensytoTeensyTxPayload {
+    ProcessedValues processedValues;
 };
 
-// structure for camera transmission data
 struct CameraTxData {
-    double values[6]; // stores camera data values
+    double values[6];
 };
 
-// structure for camera transmission payload
 struct CameraTxPayload {
-    CameraTxData camera_tx_data;
+    CameraTxData cameraTxData;
 };
 
-// structure for lidar transmission data
 struct LidarTxData {
-    int distance[4]; // stores lidar distance readings
+    int distance[4];
 };
 
-// structure for lidar transmission payload
 struct LidarTxPayload {
-    LidarTxData lidar_tx_data;
+    LidarTxData lidarTxData;
 };
 
-// function prototypes
-void verifyingObjectExistence();            // verifies existence of detected objects
-void processLidars();                        // processes lidar data
-Vector localizeWithOffensiveGoal();          // localizes robot using the offensive goal
-Vector localizeWithDefensiveGoal();          // localizes robot using the defensive goal
-Vector localizeWithBothGoals();              // localizes robot using both goals
-double frontMirrorMapping(double distance);  // maps front mirror distance
-double ballMirrorMapping(double distance);   // maps ball mirror distance
 
-#endif // MAIN_H
+
+
+
+//subroutines
+void verifyingObjectExistance();
+void processLidars();
+Vector localizeWithOffensiveGoal();
+Vector localizeWithDefensiveGoal();
+Vector localizeWithBothGoals();
+double frontMirrorMapping(double distance);
+double ballMirrorMapping(double distance);
+#endif

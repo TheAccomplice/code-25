@@ -15,13 +15,14 @@ void selectMUXChannel(uint8_t channel) {
 }
 int readMUXChannel(int index) {
     selectMUXChannel(index);
-    return analogRead(0);
+    delay(10);
+    return analogRead(M1);
 }
 
 
 
 void getValues() {
-  lightArray.RAWLDRVALUES[0] = readMUXChannel(0);
+  lightArray.RAWLDRVALUES[0] = readMUXChannel(0); //r1
   lightArray.RAWLDRVALUES[1] = readMUXChannel(1);
   lightArray.RAWLDRVALUES[2] = readMUXChannel(2);
   lightArray.RAWLDRVALUES[3] = readMUXChannel(3);
@@ -62,11 +63,11 @@ void findLine() {
 
     // No line detected
     if (maxIndex1 == -1) {
-        sensorValues.onLine = 0; 
+        sensorValues1.onLine = 0; 
         return;
     }
 
-    sensorValues.onLine = 1; // Line detected
+    sensorValues1.onLine = 1; // Line detected
 
     // If two sensors detect a line, find the angle bisector
     if (maxIndex2 != -1) {
@@ -76,11 +77,11 @@ void findLine() {
         double angleDiff = abs(angle1 - angle2);
         if (angleDiff > 180) angleDiff = 360 - angleDiff;
 
-        sensorValues.angleBisector = clipAngleto360degrees((angle1 + angle2) / 2);
-        sensorValues.depthinLine = 1.0 - cosf(angleDiff / 2.0 * PI / 180.0);
+        sensorValues1.angleBisector = clipAngleto360degrees((angle1 + angle2) / 2);
+        sensorValues1.depthinLine = 1.0 - cosf(angleDiff / 2.0 * PI / 180.0);
     } else {
         // Only one sensor detected the line, assume direct alignment
-        sensorValues.angleBisector = lightArray.LDRBearings[maxIndex1];
-        sensorValues.depthinLine = 0;
+        sensorValues1.angleBisector = lightArray.LDRBearings[maxIndex1];
+        sensorValues1.depthinLine = 0;
     }
 }
