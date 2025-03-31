@@ -21,15 +21,15 @@ DMAMEM Sensorfusion sensorfusion;
 DMAMEM BallPosition ballposition;
 
 
-DMAMEM PacketSerial CameraTeensySerial;
+PacketSerial CameraTeensySerial;
 // PacketSerial TeensyTeensySerial;
 // PacketSerial LidarTeensySerial;
 //Adafruit_BNO08x bno;
 
 
 
-DMAMEM SensorValues sensorValues;
-DMAMEM ProcessedValues processedValues;
+SensorValues sensorValues;
+ProcessedValues processedValues;
 
 FLASHMEM void receiveLidarTxData(const byte *buf, size_t size) {
     // load payload
@@ -42,13 +42,21 @@ FLASHMEM void receiveLidarTxData(const byte *buf, size_t size) {
     return;
 }
 
-FLASHMEM void receiveCameraTxData(const byte *buf, size_t size) {
+void receiveCameraTxData(const byte *buf, size_t size) {
     // load payload
     CameraTxPayload payload;
-    // if (size != sizeof(payload)) return;
-    memcpy(&payload, buf, sizeof(payload));
+    if (size != sizeof(payload)) {
+        Serial.print("Invalid data, size: ");
+        Serial.print(size);
+        Serial.println("");
+        return;
+    }
 
-    Serial.print("[0]: ");
+    memcpy(&payload, buf, sizeof(payload));
+#if 0
+    Serial.print("Size: ");
+    Serial.print(size);
+    Serial.print(" [0]: ");
     printDouble(Serial, payload.cameraTxData.values[0], 3, 1);
     Serial.print(", [1]: ");
     printDouble(Serial, payload.cameraTxData.values[1], 3, 1);
@@ -57,6 +65,7 @@ FLASHMEM void receiveCameraTxData(const byte *buf, size_t size) {
     Serial.print(", [3]: ");
     printDouble(Serial, payload.cameraTxData.values[3], 3, 1);
     Serial.println("");
+#endif
 
     #ifdef YELLOW_GOAL_ATTACK
     sensorValues.bluegoal_relativeposition.angle =
@@ -123,7 +132,7 @@ FLASHMEM Vector localize() {
             sensorValues.lidardist[3], sensorValues.lidardist[1],
             localizeWithOffensiveGoal().x(), localizeWithOffensiveGoal().y());
         Vector localisation = sensorfusion.updateLocalisation();
-        Serial.print("f");
+        // Serial.print("f");
         return localisation;
     } else if ((sensorValues.bluegoal_relativeposition.distance < 90 &&
                 processedValues.bluegoal_exists == 1) ||
@@ -136,7 +145,7 @@ FLASHMEM Vector localize() {
             sensorValues.lidardist[3], sensorValues.lidardist[1],
             localizeWithDefensiveGoal().x(), localizeWithDefensiveGoal().y());
         Vector localisation = sensorfusion.updateLocalisation();
-        Serial.print("b");
+        // Serial.print("b");
         return localisation;
     } else {
         sensorfusion.updateSensorValues(
@@ -146,7 +155,7 @@ FLASHMEM Vector localize() {
             sensorValues.lidardist[3], sensorValues.lidardist[1],
             localizeWithBothGoals().x(), localizeWithBothGoals().y());
         Vector localisation = sensorfusion.updateLocalisation();
-        Serial.print("fb");
+        // Serial.print("fb");
         return localisation;
     }
     // sensorfusion.updateSensorValues(movement.getmotorValues()[0],movement.getmotorValues()[1],movement.getmotorValues()[2],
@@ -201,6 +210,25 @@ FLASHMEM void loop() {
     double dt = loopTimeinMillis();
     CameraTeensySerial.update();
 
+    // unsigned char tmp[256];
+    // int count = Serial1.readBytes(tmp, 256);
+    // static int j = 0;
+    // for (int i=0; i<count; i++,j++){
+    //     if (tmp[i] == 0){
+    //         Serial.println("");
+    //         Serial.println("");
+    //         j=0;
+    //         continue;
+    //     }
+    //     if (tmp[i] < 16)
+    //         Serial.print(" ");
+    //     Serial.print(tmp[i], HEX);
+    //     Serial.print(" ");
+    //     if (j%16 == 0){
+    //         Serial.println("");
+    //     }   
+    // } 
+
     // LidarTeensySerial.update();
     setReports();
     getBNOreading();
@@ -232,54 +260,56 @@ FLASHMEM void loop() {
     Vector robotPosition = localize();
     processedValues.robot_position = {robotPosition.x(),robotPosition.y()};
 
-    Serial.print(" | bearing: ");
-    printDouble(Serial, processedValues.relativeBearing, 3, 1);
+    #if 1
+    // Serial.print(" | bearing: ");
+    // printDouble(Serial, processedValues.relativeBearing, 3, 1);
     // Serial.print(" | frontLidar: ");
-    // printDouble(Serial, processedValues.lidarDistance[0], 3, 0);
+    // printDouble(Serial, processedValues.lidarDistance[0], 3, 1);
     // Serial.print(" | rightLidar: ");
-    // printDouble(Serial, processedValues.lidarDistance[1], 3, 0);
+    // printDouble(Serial, processedValues.lidarDistance[1], 3, 1);
     // Serial.print(" | backLidar: ");
-    // printDouble(Serial, processedValues.lidarDistance[2], 3, 0);
+    // printDouble(Serial, processedValues.lidarDistance[2], 3, 1);
     // Serial.print(" | leftLidar: ");
-    // printDouble(Serial, processedValues.lidarDistance[3], 3, 0);
+    // printDouble(Serial, processedValues.lidarDistance[3], 3, 1);
 
     // Serial.print(" | frontLidarConf: ");
-    // printDouble(Serial, processedValues.lidarConfidence[0], 3, 0);
+    // printDouble(Serial, processedValues.lidarConfidence[0], 3, 1);
     // Serial.print(" | rightLidarConf: ");
-    // printDouble(Serial, processedValues.lidarConfidence[1], 3, 0);
+    // printDouble(Serial, processedValues.lidarConfidence[1], 3, 1);
     // Serial.print(" | backLidarConf: ");
-    // printDouble(Serial, processedValues.lidarConfidence[2], 3, 0);
+    // printDouble(Serial, processedValues.lidarConfidence[2], 3, 1);
     // Serial.print(" | leftLidarConf: ");
-    // printDouble(Serial, processedValues.lidarConfidence[3], 3, 0);
+    // printDouble(Serial, processedValues.lidarConfidence[3], 3, 1);
         
-    Serial.print(" | attackGoalAngle: ");
-    printDouble(Serial, processedValues.yellowgoal_relativeposition.angle, 3, 1);
-    Serial.print(" | attackGoalDist: ");
-    printDouble(Serial, processedValues.yellowgoal_relativeposition.distance, 3,
-                1);
+    // Serial.print(" | attackGoalAngle: ");
+    // printDouble(Serial, processedValues.yellowgoal_relativeposition.angle, 3, 1);
+    // Serial.print(" | attackGoalDist: ");
+    // printDouble(Serial, processedValues.yellowgoal_relativeposition.distance, 3,
+    //             1);
     Serial.print(" | defenceGoalAngle: ");
     printDouble(Serial, processedValues.bluegoal_relativeposition.angle, 3, 1);
     Serial.print(" | defenceGoalDist: ");
     printDouble(Serial, processedValues.bluegoal_relativeposition.distance, 3, 1);
-    Serial.print(" | ballAngle: ");
-    printDouble(Serial, processedValues.ball_relativeposition.angle, 3, 1);
-    Serial.print(" | ballDist: ");
-    printDouble(Serial, processedValues.ball_relativeposition.distance, 3, 1);
-    // processed Values
-    Serial.print(" | ballExistence: ");
-    printDouble(Serial, processedValues.ballExists, 1, 1);
-    Serial.print(" | attackGoal Existence: ");
-    printDouble(Serial, processedValues.yellowgoal_exists, 1, 1);
-    Serial.print(" | defenceGoal Existence: ");
-    printDouble(Serial, processedValues.bluegoal_exists, 1, 1);
-    // Location
-    Serial.print(" | X_position: ");
-    printDouble(Serial, processedValues.robot_position.x, 3, 1);
-    Serial.print(" | Y_position: ");
-    printDouble(Serial, processedValues.robot_position.y, 3, 1);
+    // Serial.print(" | ballAngle: ");
+    // printDouble(Serial, processedValues.ball_relativeposition.angle, 3, 1);
+    // Serial.print(" | ballDist: ");
+    // printDouble(Serial, processedValues.ball_relativeposition.distance, 3, 1);
+    // // processed Values
+    // Serial.print(" | ballExistence: ");
+    // printDouble(Serial, processedValues.ballExists, 1, 1);
+    // Serial.print(" | attackGoal Existence: ");
+    // printDouble(Serial, processedValues.yellowgoal_exists, 1, 1);
+    // Serial.print(" | defenceGoal Existence: ");
+    // printDouble(Serial, processedValues.bluegoal_exists, 1, 1);
+    // // Location
+    // Serial.print(" | X_position: ");
+    // printDouble(Serial, processedValues.robot_position.x, 3, 1);
+    // Serial.print(" | Y_position: ");
+    // printDouble(Serial, processedValues.robot_position.y, 3, 1);
     Serial.println("");
+    #endif
 
-    delay(1000);
+    // delay(1000); //this is the problem
 
     
 

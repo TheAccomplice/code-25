@@ -13,7 +13,7 @@ np_dot = np.dot
 print( "version", ulab.__version__ )
 led = LED(2) # green led
 led.off()
-serial = UART(3,500000)
+serial = UART(1,500000)
 '''Extended Kalman Filter for smoother ball following'''
 
 class KalmanFilter:
@@ -517,10 +517,11 @@ def cobs_encode(input_bytes):
 
     return output_bytes[:write_index]
 
+count = 1
+
 while(True):
     debug = False
     debug = True
-
     clock.tick()
     img = sensor.snapshot()
 
@@ -540,6 +541,7 @@ while(True):
         data[4],
         data[5],
     )
+
     #buf = struct.pack(
         #"<dddddd",
         #data[0] ,  # d, double
@@ -549,11 +551,18 @@ while(True):
         #data[4],
         #time,
     #)
-    print(data[1])
-
+    # print(data[1])
+    
     # Encode with COBS
+            
     buf = cobs_encode(buf)
+    # print(f'{len(buf)}, {buf}')    
+    
+    # for i in range(len(buf)):
+    #     buf[i] = count.to_bytes(1, 'big')[0]
+    #     count += 1
+    #     if count > 255:
+    #         count = 1
+        
+    
     buf += b"\x00"  # delimiter byte
-
-    # Send packet
-    serial.write(buf)
