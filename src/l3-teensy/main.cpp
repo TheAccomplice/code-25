@@ -1,6 +1,6 @@
 #include "PacketSerial.h"
 #include "SPI.h"
-#include "Adafruit_BNO08x.h"
+//#include "Adafruit_BNO08x.h"
 #include "vector.h"
 #include <Arduino.h>
 #include <PacketSerial.h>
@@ -17,21 +17,21 @@
 #define LDRPINCOUNT 36
 #define RadiusofLDR 1.0F
 
-Sensorfusion sensorfusion;
-BallPosition ballposition;
+DMAMEM Sensorfusion sensorfusion;
+DMAMEM BallPosition ballposition;
 
 
-PacketSerial CameraTeensySerial;
+DMAMEM PacketSerial CameraTeensySerial;
 // PacketSerial TeensyTeensySerial;
 // PacketSerial LidarTeensySerial;
-BNO08x bno;
+//Adafruit_BNO08x bno;
 
 
 
-SensorValues sensorValues;
-ProcessedValues processedValues;
+DMAMEM SensorValues sensorValues;
+DMAMEM ProcessedValues processedValues;
 
-void receiveLidarTxData(const byte *buf, size_t size) {
+FLASHMEM void receiveLidarTxData(const byte *buf, size_t size) {
     // load payload
     LidarTxPayload payload;
     // if (size != sizeof(payload)) return;
@@ -42,11 +42,21 @@ void receiveLidarTxData(const byte *buf, size_t size) {
     return;
 }
 
-void receiveCameraTxData(const byte *buf, size_t size) {
+FLASHMEM void receiveCameraTxData(const byte *buf, size_t size) {
     // load payload
     CameraTxPayload payload;
     // if (size != sizeof(payload)) return;
     memcpy(&payload, buf, sizeof(payload));
+
+    Serial.print("[0]: ");
+    printDouble(Serial, payload.cameraTxData.values[0], 3, 1);
+    Serial.print(", [1]: ");
+    printDouble(Serial, payload.cameraTxData.values[1], 3, 1);
+    Serial.print(", [2]: ");
+    printDouble(Serial, payload.cameraTxData.values[2], 3, 1);
+    Serial.print(", [3]: ");
+    printDouble(Serial, payload.cameraTxData.values[3], 3, 1);
+    Serial.println("");
 
     #ifdef YELLOW_GOAL_ATTACK
     sensorValues.bluegoal_relativeposition.angle =
@@ -79,30 +89,29 @@ void receiveCameraTxData(const byte *buf, size_t size) {
 
 void getBNOreading() {
     // bno.enableGyroIntegratedRotationVector();
-    bno.enableGyroIntegratedRotationVector();
-    if (bno.getSensorEvent() == true) {
-        if (bno.getSensorEventID() ==
-            SENSOR_REPORTID_GYRO_INTEGRATED_ROTATION_VECTOR) {
-            sensorValues.relativeBearing =
-                bno.getGyroIntegratedRVK()
-                * 180.0 * 0.8; // Convert yaw / heading to degree
-        }
-    }
+    // if (bno.getSensorEvent() == true) {
+    //     if (bno.getSensorEventID() ==
+    //         SENSOR_REPORTID_GYRO_INTEGRATED_ROTATION_VECTOR) {
+    //         sensorValues.relativeBearing =
+    //             bno.getGyroIntegratedRVK()
+    //             * 180.0 * 0.8; // Convert yaw / heading to degree
+    //     }
+    //}
 }
 
 void setReports(void) {
 
-    if (bno.enableGyroIntegratedRotationVector()== true) {
-        // Serial.println(F("Gryo Integrated Rotation vector enabled"));
-        // Serial.println(F("Output in form i, j, k, real, gyroX, gyroY,
-        // gyroZ"));
-    } else {
-        // Serial.println("Could not enable gyro integrated rotation vector");
-    }
+    // if (bno.enableGyroIntegratedRotationVector()== true) {
+    //     // Serial.println(F("Gryo Integrated Rotation vector enabled"));
+    //     // Serial.println(F("Output in form i, j, k, real, gyroX, gyroY,
+    //     // gyroZ"));
+    // } else {
+    //     // Serial.println("Could not enable gyro integrated rotation vector");
+    // }
 }
 
 
-Vector localize() {
+FLASHMEM Vector localize() {
     if ((sensorValues.yellowgoal_relativeposition.distance < 90 &&
          processedValues.yellowgoal_exists == 1) ||
         (processedValues.yellowgoal_exists == 1 &&
@@ -158,20 +167,20 @@ void verifyingObjectExistance() {
 
 
 void setup() {
-    Serial5.begin(500000);
     Serial1.begin(500000);
-    Serial4.begin(115200);
+    Serial5.begin(500000);
+    // Serial4.begin(115200);
     Serial.begin(9600);
     Wire.begin();
     Wire.setClock(100000);
-    bno.begin(0x4A, Wire);
-    CameraTeensySerial.begin(&Serial1);
+    //bno.begin(0x4A, Wire);
+    CameraTeensySerial.setStream(&Serial1);
     CameraTeensySerial.setPacketHandler(&receiveCameraTxData);
 
-    LidarTeensySerial.begin(&Serial4);
-    LidarTeensySerial.setPacketHandler(&receiveLidarTxData);
+    //LidarTeensySerial.begin(&Serial4);
+    //LidarTeensySerial.setPacketHandler(&receiveLidarTxData);
 
-    TeensyTeensySerial.begin(&Serial5);
+    //TeensyTeensySerial.begin(&Serial5);
 
     setReports();
 
@@ -188,9 +197,10 @@ double backVariance = 2;
 double leftVariance = 2;
 double rightVariance = 2;
 
-void loop() {
+FLASHMEM void loop() {
     double dt = loopTimeinMillis();
     CameraTeensySerial.update();
+
     // LidarTeensySerial.update();
     setReports();
     getBNOreading();
@@ -224,24 +234,24 @@ void loop() {
 
     Serial.print(" | bearing: ");
     printDouble(Serial, processedValues.relativeBearing, 3, 1);
-    Serial.print(" | frontLidar: ");
-    printDouble(Serial, processedValues.lidarDistance[0], 3, 0);
-    Serial.print(" | rightLidar: ");
-    printDouble(Serial, processedValues.lidarDistance[1], 3, 0);
-    Serial.print(" | backLidar: ");
-    printDouble(Serial, processedValues.lidarDistance[2], 3, 0);
-    Serial.print(" | leftLidar: ");
-    printDouble(Serial, processedValues.lidarDistance[3], 3, 0);
+    // Serial.print(" | frontLidar: ");
+    // printDouble(Serial, processedValues.lidarDistance[0], 3, 0);
+    // Serial.print(" | rightLidar: ");
+    // printDouble(Serial, processedValues.lidarDistance[1], 3, 0);
+    // Serial.print(" | backLidar: ");
+    // printDouble(Serial, processedValues.lidarDistance[2], 3, 0);
+    // Serial.print(" | leftLidar: ");
+    // printDouble(Serial, processedValues.lidarDistance[3], 3, 0);
 
-    Serial.print(" | frontLidarConf: ");
-    printDouble(Serial, processedValues.lidarConfidence[0], 3, 0);
-    Serial.print(" | rightLidarConf: ");
-    printDouble(Serial, processedValues.lidarConfidence[1], 3, 0);
-    Serial.print(" | backLidarConf: ");
-    printDouble(Serial, processedValues.lidarConfidence[2], 3, 0);
-    Serial.print(" | leftLidarConf: ");
-    printDouble(Serial, processedValues.lidarConfidence[3], 3, 0);
-    
+    // Serial.print(" | frontLidarConf: ");
+    // printDouble(Serial, processedValues.lidarConfidence[0], 3, 0);
+    // Serial.print(" | rightLidarConf: ");
+    // printDouble(Serial, processedValues.lidarConfidence[1], 3, 0);
+    // Serial.print(" | backLidarConf: ");
+    // printDouble(Serial, processedValues.lidarConfidence[2], 3, 0);
+    // Serial.print(" | leftLidarConf: ");
+    // printDouble(Serial, processedValues.lidarConfidence[3], 3, 0);
+        
     Serial.print(" | attackGoalAngle: ");
     printDouble(Serial, processedValues.yellowgoal_relativeposition.angle, 3, 1);
     Serial.print(" | attackGoalDist: ");
@@ -264,17 +274,18 @@ void loop() {
     printDouble(Serial, processedValues.bluegoal_exists, 1, 1);
     // Location
     Serial.print(" | X_position: ");
-    printDouble(Serial, processedValues.robot_position.x, 3, 0);
+    printDouble(Serial, processedValues.robot_position.x, 3, 1);
     Serial.print(" | Y_position: ");
-    printDouble(Serial, processedValues.robot_position.y, 3, 0);
+    printDouble(Serial, processedValues.robot_position.y, 3, 1);
     Serial.println("");
+
+    delay(1000);
 
     
 
-
     byte buf[sizeof(teensytoTeensyTxPayload)];
     memcpy(buf, &processedValues, sizeof(processedValues));
-    TeensyTeensySerial.send(buf, sizeof(buf));
+    //TeensyTeensySerial.send(buf, sizeof(buf));
 
     counter++;
 }

@@ -2,56 +2,52 @@
 #define KALMAN_H
 
 #include <ArduinoEigenDense.h>
-#undef _B
-#undef _P
+
 class KalmanFilter {
   public:
-    // constructor initializes kalman filter with given matrices
-    KalmanFilter(const Eigen::MatrixXd& A,      // system dynamic coefficient matrix
-                 const Eigen::MatrixXd& B,      // control input coefficient matrix
-                 const Eigen::MatrixXd& Q,      // process noise covariance
-                 const Eigen::MatrixXd& R,      // measurement noise covariance
-                 const Eigen::MatrixXd& I,      // identity matrix
-                 const Eigen::MatrixXd& H       // measurement coefficient matrix
+    KalmanFilter(Eigen::MatrixXd _A,      // system dynamic coefficient matrix
+                 Eigen::MatrixXd memberB, // control input coefficient matrix
+                 Eigen::MatrixXd _Q,      // process noise covariance
+                 Eigen::MatrixXd _R,      // measurement noise covariance
+                 Eigen::MatrixXd _I,      // identity matrix
+                 Eigen::MatrixXd _H       // measurement coefficient matrix
     );
 
-    // updates kalman filter matrices
-    void updateConstants(const Eigen::MatrixXd& A, 
-                         const Eigen::MatrixXd& B, 
-                         const Eigen::MatrixXd& Q, 
-                         const Eigen::MatrixXd& R, 
-                         const Eigen::MatrixXd& I, 
-                         const Eigen::MatrixXd& H);
+    void
+    updateConstants(Eigen::MatrixXd _A, // system dynamic coefficient matrix
+                    Eigen::MatrixXd memberB, // control input coefficient matrix
+                    Eigen::MatrixXd _Q,      // process noise covariance
+                    Eigen::MatrixXd _R,      // measurement noise covariance
+                    Eigen::MatrixXd _I,      // identity matrix
+                    Eigen::MatrixXd _H       // measurement coefficient matrix
+    );
 
-    // initializes state estimate and covariance matrix
-    void initialize(const Eigen::VectorXd& x_hat, 
-                    const Eigen::MatrixXd& P, 
-                    const Eigen::MatrixXd& K);
+    void initialize(Eigen::VectorXd _x_hat, Eigen::MatrixXd memberP,
+                    Eigen::MatrixXd K);
 
-    // prediction step of kalman filter
-    void predict(const Eigen::VectorXd& u);
+    void predict(Eigen::VectorXd _u);
+    void correction(Eigen::VectorXd _z);
 
-    // correction step of kalman filter
-    void correction(const Eigen::VectorXd& z);
-
-    // returns the updated state estimate
-    Eigen::VectorXd updateState() const;
+    Eigen::MatrixXd updateState();
 
   private:
-    // system matrices
-    Eigen::MatrixXd _A, _B, _Q, _R, _I, _H;
+    // parameters
+    Eigen::MatrixXd _A, memberB, _Q, _R, _I, _H;
 
-    // kalman filter variables
-    Eigen::MatrixXd _P; // apriori and aposteriori estimate error
-    Eigen::MatrixXd _K; // kalman gain
+    // internal variables
+    Eigen::MatrixXd memberP; // apriori and aposteriori estimate error
+    Eigen::MatrixXd _K;      // kalman gain
 
     // matrix dimensions
-    int _n, _m, _l;
+    int m, n, _l;
 
-    // measurement and state variables
+    // measurement
     Eigen::VectorXd _u; // control input
     Eigen::VectorXd _z; // measurement
-    Eigen::VectorXd _x_hat; // state estimate
+    // output
+    Eigen::VectorXd _x_hat;
+
+    long long time;
 };
 
-#endif // KALMAN_H
+#endif
