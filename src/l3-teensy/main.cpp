@@ -121,7 +121,7 @@ void setReports(void) {
 void predict_ball_in_catchment(){
     if (ball_last_position_relative_to_robot.x < 10 && 
         ball_last_position_relative_to_robot.x > -10 &&
-        ball_last_position_relative_to_robot.y < 25 &&
+        ball_last_position_relative_to_robot.y < 40 &&
         ball_last_position_relative_to_robot.y > 2 &&
         processedValues.ballExists == 0){
             processedValues.ball_in_catchment = 1;
@@ -129,7 +129,7 @@ void predict_ball_in_catchment(){
     else if (processedValues.ball_in_catchment == 1 && processedValues.ballExists == 0) {
         processedValues.ball_in_catchment = 1;
     }
-     {
+    else {
         processedValues.ball_in_catchment = 0;
     }
 }
@@ -221,7 +221,7 @@ double backVariance = 2;
 double leftVariance = 2;
 double rightVariance = 2;
 
-FLASHMEM void loop() {
+void loop() {
     double dt = loopTimeinMillis();
     CameraTeensySerial.update();
 
@@ -255,8 +255,6 @@ FLASHMEM void loop() {
     processedValues.relativeBearing = -sensorValues.relativeBearing;
 
     //setup
-    verifyingObjectExistance();
-    predict_ball_in_catchment();
     processLidars();
 
     (processedValues.lidarConfidence[0] == 1) ? frontVariance = 3 : frontVariance = 400;
@@ -275,6 +273,10 @@ FLASHMEM void loop() {
 
     Vector robotPosition = localize();
     processedValues.robot_position = {robotPosition.x(),robotPosition.y()};
+
+    //must be below updatesensormesaurement
+    verifyingObjectExistance();
+    predict_ball_in_catchment();
 
     #ifdef DEBUG
     // Serial.print(" | bearing: ");
@@ -344,9 +346,13 @@ FLASHMEM void loop() {
     //TeensyTeensySerial.send(buf, sizeof(buf));
 
     if (processedValues.ballExists == 1 ) {
-        ball_last_position_relative_to_robot = {sensorValues.ball_relativeposition.x(),
-        sensorValues.ball_relativeposition.y()};
-        Serial.print("yay");
+        if (sensorValues.ball_relativeposition.distance == 0) {
+            Serial.println("invalid");
+        } else {
+            ball_last_position_relative_to_robot = {sensorValues.ball_relativeposition.x(),
+            sensorValues.ball_relativeposition.y()};
+            Serial.print("yay");
+        }
     };
     counter++;
 }
