@@ -6,6 +6,7 @@
 #include "main.h"
 //#include "movement.h"
 #include "util.h"
+#include "shared.h"
 
 
 LightArray lightArray; //need to define them in .cpp folder
@@ -31,21 +32,26 @@ void loop() {
 
   delay(100);
   */
-
-  #define DEBUG
-  #ifdef DEBUG
-  for (int i = 8; i < 15; i++) {
+  for (int i = 0; i < 15; i++) {
     lightArray.RAWLDRVALUES[i] = readMUXChannel(i);
-    if (lightArray.RAWLDRVALUES[i] <= 0) {
-      //return;
+    if (lightArray.RAWLDRVALUES[i] > lightArray.LDRThresholds[i]) {
+      whiteAvg[i].push(lightArray.RAWLDRVALUES[i]);
     }
+    else{
+      greenAvg[i].push(lightArray.RAWLDRVALUES[i]);
+    }
+
+    lightArray.LDRThresholds[i] = (whiteAvg[i].get_avg() + greenAvg[i].get_avg()) / 2;
+
     Serial.print(i);
     Serial.print(": ");
     Serial.print(lightArray.RAWLDRVALUES[i]);
     Serial.print(" | ");
-  }
-  Serial.println();
+    Serial.print("T: ");
+    Serial.print(lightArray.LDRThresholds[i]);
 
-  delay(100); 
-  #endif
+
+  }
+Serial.println();
+delay(100)
 }

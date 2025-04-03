@@ -4,6 +4,7 @@
 
 #include "PacketSerial.h"
 #include "main.h"
+#include "shared.h"
 //#include "movement.h"
 //#include "util.h"
 
@@ -38,6 +39,19 @@ void getValues() {
   lightArray.RAWLDRVALUES[13] = readMUXChannel(13);
   lightArray.RAWLDRVALUES[14] = readMUXChannel(14);
 }
+
+movingAvg greenAvg[15] = {
+    movingAvg(30), movingAvg(30), movingAvg(30), movingAvg(30),
+    movingAvg(30), movingAvg(30), movingAvg(30), movingAvg(30),
+    movingAvg(30), movingAvg(30), movingAvg(30), movingAvg(30),
+    movingAvg(30), movingAvg(30), movingAvg(30)
+};
+movingAvg whiteAvg[15] = {
+    movingAvg(30), movingAvg(30), movingAvg(30), movingAvg(30),
+    movingAvg(30), movingAvg(30), movingAvg(30), movingAvg(30),
+    movingAvg(30), movingAvg(30), movingAvg(30), movingAvg(30),
+    movingAvg(30), movingAvg(30), movingAvg(30)
+};
 
 void findLine() {
     getValues(); // Get LDR values

@@ -265,11 +265,12 @@ void loop() {
     sensorfusion.updateConstants(frontVariance, backVariance, leftVariance,
                                 rightVariance, 10, 15);
 
-    ballposition.updateConstants(dt / 1000);
-    ballposition.updateSensorMeasurement(
-        sensorValues.ball_relativeposition.x(),
-        sensorValues.ball_relativeposition.y());
-    processedValues.ball_relativeposition = ballposition.updatePosition();
+    // kalman commented out
+    // ballposition.updateConstants(dt / 1000);
+    // ballposition.updateSensorMeasurement(
+    //     sensorValues.ball_relativeposition.x(),
+    //     sensorValues.ball_relativeposition.y());
+    // processedValues.ball_relativeposition = ballposition.updatePosition();
 
     Vector robotPosition = localize();
     processedValues.robot_position = {robotPosition.x(),robotPosition.y()};
