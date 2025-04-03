@@ -13,6 +13,7 @@
 #include "config.h"
 
 #define TEENSY
+#define DEBUG
 
 #define LDRPINCOUNT 36
 #define RadiusofLDR 1.0F
@@ -31,6 +32,8 @@ PacketSerial CameraTeensySerial;
 SensorValues sensorValues;
 ProcessedValues processedValues;
 
+Point ball_last_position_relative_to_robot;
+
 FLASHMEM void receiveLidarTxData(const byte *buf, size_t size) {
     // load payload
     LidarTxPayload payload;
@@ -40,6 +43,7 @@ FLASHMEM void receiveLidarTxData(const byte *buf, size_t size) {
         sensorValues.lidardist[i] = payload.lidarTxData.distance[i];
     }
     return;
+
 }
 
 void receiveCameraTxData(const byte *buf, size_t size) {
@@ -53,18 +57,13 @@ void receiveCameraTxData(const byte *buf, size_t size) {
     }
 
     memcpy(&payload, buf, sizeof(payload));
-#if 0
-    Serial.print("Size: ");
-    Serial.print(size);
-    Serial.print(" [0]: ");
-    printDouble(Serial, payload.cameraTxData.values[0], 3, 1);
-    Serial.print(", [1]: ");
-    printDouble(Serial, payload.cameraTxData.values[1], 3, 1);
-    Serial.print(", [2]: ");
-    printDouble(Serial, payload.cameraTxData.values[2], 3, 1);
-    Serial.print(", [3]: ");
-    printDouble(Serial, payload.cameraTxData.values[3], 3, 1);
-    Serial.println("");
+#ifdef DEBUG
+    // Serial.print("Size: ");
+    // Serial.print(", [2]: ");
+    // printDouble(Serial, payload.cameraTxData.values[2], 3, 1);
+    // Serial.print(", [3]: ");
+    // printDouble(Serial, payload.cameraTxData.values[3], 3, 1);
+    // // Serial.println("");
 #endif
 
     #ifdef YELLOW_GOAL_ATTACK
@@ -119,6 +118,21 @@ void setReports(void) {
     // }
 }
 
+void predict_ball_in_catchment(){
+    if (ball_last_position_relative_to_robot.x < 10 && 
+        ball_last_position_relative_to_robot.x > -10 &&
+        ball_last_position_relative_to_robot.y < 25 &&
+        ball_last_position_relative_to_robot.y > 2 &&
+        processedValues.ballExists == 0){
+            processedValues.ball_in_catchment = 1;
+        }
+    else if (processedValues.ball_in_catchment == 1 && processedValues.ballExists == 0) {
+        processedValues.ball_in_catchment = 1;
+    }
+     {
+        processedValues.ball_in_catchment = 0;
+    }
+}
 
 FLASHMEM Vector localize() {
     if ((sensorValues.yellowgoal_relativeposition.distance < 90 &&
@@ -172,11 +186,12 @@ void verifyingObjectExistance() {
         (sensorValues.bluegoal_relativeposition.distance == 0) ? 0 : 1;
     processedValues.yellowgoal_exists =
         (sensorValues.yellowgoal_relativeposition.distance == 0) ? 0 : 1;
+
 }
 
 
 void setup() {
-    Serial1.begin(500000);
+    Serial1.begin(115200);
     Serial5.begin(500000);
     // Serial4.begin(115200);
     Serial.begin(9600);
@@ -241,6 +256,7 @@ FLASHMEM void loop() {
 
     //setup
     verifyingObjectExistance();
+    predict_ball_in_catchment();
     processLidars();
 
     (processedValues.lidarConfidence[0] == 1) ? frontVariance = 3 : frontVariance = 400;
@@ -260,7 +276,7 @@ FLASHMEM void loop() {
     Vector robotPosition = localize();
     processedValues.robot_position = {robotPosition.x(),robotPosition.y()};
 
-    #if 1
+    #ifdef DEBUG
     // Serial.print(" | bearing: ");
     // printDouble(Serial, processedValues.relativeBearing, 3, 1);
     // Serial.print(" | frontLidar: ");
@@ -286,17 +302,17 @@ FLASHMEM void loop() {
     // Serial.print(" | attackGoalDist: ");
     // printDouble(Serial, processedValues.yellowgoal_relativeposition.distance, 3,
     //             1);
-    Serial.print(" | defenceGoalAngle: ");
-    printDouble(Serial, processedValues.bluegoal_relativeposition.angle, 3, 1);
-    Serial.print(" | defenceGoalDist: ");
-    printDouble(Serial, processedValues.bluegoal_relativeposition.distance, 3, 1);
-    // Serial.print(" | ballAngle: ");
-    // printDouble(Serial, processedValues.ball_relativeposition.angle, 3, 1);
-    // Serial.print(" | ballDist: ");
-    // printDouble(Serial, processedValues.ball_relativeposition.distance, 3, 1);
-    // // processed Values
-    // Serial.print(" | ballExistence: ");
-    // printDouble(Serial, processedValues.ballExists, 1, 1);
+    // Serial.print(" | defenceGoalAngle: ");
+    // printDouble(Serial, processedValues.bluegoal_relativeposition.angle, 3, 1);
+    // Serial.print(" | defenceGoalDist: ");
+    // printDouble(Serial, processedValues.bluegoal_relativeposition.distance, 3, 1);
+    Serial.print(" | ballAngle: ");
+    printDouble(Serial, sensorValues.ball_relativeposition.angle, 3, 1);
+    Serial.print(" | ballDist: ");
+    printDouble(Serial, sensorValues.ball_relativeposition.distance, 3, 1);
+    // processed Values
+    Serial.print(" | ballExistence: ");
+    printDouble(Serial, processedValues.ballExists, 1, 1);
     // Serial.print(" | attackGoal Existence: ");
     // printDouble(Serial, processedValues.yellowgoal_exists, 1, 1);
     // Serial.print(" | defenceGoal Existence: ");
@@ -306,6 +322,16 @@ FLASHMEM void loop() {
     // printDouble(Serial, processedValues.robot_position.x, 3, 1);
     // Serial.print(" | Y_position: ");
     // printDouble(Serial, processedValues.robot_position.y, 3, 1);
+
+    // Prediction Parameters
+    Serial.print(" | ball in catchment: ");
+    printDouble(Serial, processedValues.ball_in_catchment, 1, 1);
+    Serial.print(" | x_ball_postion to robot: ");
+    printDouble(Serial, ball_last_position_relative_to_robot.x, 1, 1);
+    Serial.print(" | y_ball postion to robot: ");
+    printDouble(Serial, ball_last_position_relative_to_robot.y, 1, 1);
+    
+
     Serial.println("");
     #endif
 
@@ -317,5 +343,10 @@ FLASHMEM void loop() {
     memcpy(buf, &processedValues, sizeof(processedValues));
     //TeensyTeensySerial.send(buf, sizeof(buf));
 
+    if (processedValues.ballExists == 1 ) {
+        ball_last_position_relative_to_robot = {sensorValues.ball_relativeposition.x(),
+        sensorValues.ball_relativeposition.y()};
+        Serial.print("yay");
+    };
     counter++;
 }

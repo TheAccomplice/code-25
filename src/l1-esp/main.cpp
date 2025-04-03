@@ -9,7 +9,7 @@
 
 
 LightArray lightArray; //need to define them in .cpp folder
-SensorValues sensorValues;
+SensorValues1 sensorValues1;
 
 void setup() {
   pinMode(S0, OUTPUT);
@@ -34,7 +34,7 @@ void loop() {
 
   #define DEBUG
   #ifdef DEBUG
-  for (int i = 7; i < 9; i++) {
+  for (int i = 8; i < 15; i++) {
     lightArray.RAWLDRVALUES[i] = readMUXChannel(i);
     if (lightArray.RAWLDRVALUES[i] <= 0) {
       //return;

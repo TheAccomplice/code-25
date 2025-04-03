@@ -47,6 +47,6 @@ struct LightArray {
 
 //global variables 
 extern LightArray lightArray;
-extern SensorValues sensorValues;
+extern SensorValues1 sensorValues1;
 
 #endif

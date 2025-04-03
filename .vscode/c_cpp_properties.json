@@ -8,7 +8,6 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/include",
                 "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/src",
                 "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/.pio/libdeps/l3-teensy/ArduinoEigen",
                 "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/.pio/libdeps/l3-teensy/ArxTypeTraits",
@@ -21,6 +20,7 @@
                 "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/.pio/libdeps/l3-teensy/PacketSerial/src",
                 "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/src/l3-Teensy/include",
                 "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/src/l3-Teensy",
+                "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/include",
                 "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/cores/teensy4",
                 "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/.pio/libdeps/l3-teensy/Unity/src",
                 "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/ADC",
@@ -124,7 +124,6 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/include",
                     "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/src",
                     "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/.pio/libdeps/l3-teensy/ArduinoEigen",
                     "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/.pio/libdeps/l3-teensy/ArxTypeTraits",
@@ -137,6 +136,7 @@
                     "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/.pio/libdeps/l3-teensy/PacketSerial/src",
                     "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/src/l3-Teensy/include",
                     "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/src/l3-Teensy",
+                    "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/include",
                     "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/cores/teensy4",
                     "c:/Users/Administrator/loud-robotics/Dynamo/2025/code-25/.pio/libdeps/l3-teensy/Unity/src",
                     "C:/Users/Administrator/.platformio/packages/framework-arduinoteensy/libraries/ADC",

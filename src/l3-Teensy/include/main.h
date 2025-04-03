@@ -15,12 +15,17 @@ struct ProcessedValues {
     Vector yellowgoal_relativeposition;
     Vector bluegoal_relativeposition;
     int ballExists = 0;
+    int ball_in_catchment = 0;
     int yellowgoal_exists = 0;
     int bluegoal_exists = 0;
     int lidarDistance[4];
     double lidarConfidence[4];
     int relativeBearing;
     Point robot_position;
+    double past_true_x_left = 0;
+    double past_true_x_right = 0;
+    double past_true_y_front = 0;
+    double past_true_y_back = 0;
 };
 
 struct SensorValues {

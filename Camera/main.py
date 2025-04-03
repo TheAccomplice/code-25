@@ -13,7 +13,7 @@ np_dot = np.dot
 print( "version", ulab.__version__ )
 led = LED(2) # green led
 led.off()
-serial = UART(1,500000)
+serial = UART(1,115200)
 '''Extended Kalman Filter for smoother ball following'''
 
 class KalmanFilter:
@@ -266,7 +266,7 @@ class obj:
     def process(self, mapDist = True):
         # currently ball is mapped before finding angle, goals are not
         # need to test to see if that makes a difference
-        self.angle = degrees(atan2(self.angley,self.anglex))
+        self.angle = degrees(atan2(self.anglex,-self.angley))
         #if (self.x > 0 and self.y > 0):
             #self.angle = self.angle
         #elif (self.x > 0 and self.y < 0):
@@ -376,7 +376,7 @@ def find_objects(debug=False):
     global notFoundCount
     predBall = None
     img.draw_cross(centreX, centreY, color = (255, 255, 255))
-    ball = track_goal(red_thresh, 1, 1, color = (0, 255, 0), stride = 1, debug =  debug, merge = False, margin = 0)
+    ball = track_goal(red_thresh, 30, 30, color = (0, 255, 0), stride = 1, debug =  debug, merge = False, margin = 0)
     blue = track_goal(blue_thresh, 10, 10, color = (0, 0, 255), stride = 2,  debug = debug, merge = True, margin = 5)
     yellow = track_goal(yellow_thresh, 10, 10, color = (255, 0, 0), stride = 5, debug =  debug, merge = False, margin = 0)
 
@@ -566,3 +566,4 @@ while(True):
         
     
     buf += b"\x00"  # delimiter byte
+    serial.write(buf)
