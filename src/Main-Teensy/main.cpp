@@ -134,9 +134,9 @@ void loop() {
         movement.setConstantDirection(Direction::Constant{
                 ballAngleOffset(processedValues.ball_relativeposition.distance,
                                 processedValues.ball_relativeposition.angle) +
-                                processedValues.ball_relativeposition.angle})
-        movement.setconstantVelocity(
-                Velocity::constant{movement.applySigmoid(
+                                processedValues.ball_relativeposition.angle});
+        movement.setConstantVelocity(
+                Velocity::Constant{movement.applySigmoid(
                 500, 300,
                 curveAroundBallMultiplier(
                     processedValues.ball_relativeposition.angle,
