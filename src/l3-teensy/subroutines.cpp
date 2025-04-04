@@ -10,12 +10,21 @@
 
 double frontMirrorMapping(double distance) {
     if (distance != 500) {
-        return (5.39617219 * powf(10, -7) * powf(distance, 5) -
-                1.61827053 * powf(10, -4) * powf(distance, 4) +
-                1.88452202 * powf(10, -2) * powf(distance, 3) -
-                1.04993865 * powf(10, 0) * powf(distance, 2) +
-                2.82679699 * 10 * distance - 
-                2.83240269 * powf(10, 2));
+        float dd = distance * distance;
+        float ddd = dd * distance;
+        float dddd = ddd * distance;
+        return -7.81250000e-07 *dddd +
+                3.14385417e-04 * ddd +
+                -4.70777480e-02 * dd +
+                3.40669600 * distance +
+                2.65758583;
+
+        // return (5.39617219 * powf(10, -7) * powf(distance, 5) -
+        //         1.61827053 * powf(10, -4) * powf(distance, 4) +
+        //         1.88452202 * powf(10, -2) * powf(distance, 3) -
+        //         1.04993865 * powf(10, 0) * powf(distance, 2) +
+        //         2.82679699 * 10 * distance - 
+        //         2.83240269 * powf(10, 2));
     } else
         return 0;
 }
@@ -67,7 +76,7 @@ void processLidars() {
     Point CameraPosition;
 
     // DELELETE THIS ****
-    processedValues.relativeBearing = 0;
+    //processedValues.relativeBearing = 0;
     // *************************
     
     for (int i = 0; i < 4; i++) {

@@ -81,5 +81,8 @@ class movingAvg{
         
 };
 
+extern movingAvg whiteAvg[15];
+extern movingAvg greenAvg[15];
+
 #endif
 

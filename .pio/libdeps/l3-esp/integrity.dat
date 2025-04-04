@@ -1,4 +1,5 @@
-adafruit/Adafruit Unified Sensor@^1.1.9
-budryerson/TFLI2C@^0.2.0
-adafruit/Adafruit BNO055@^1.2.2
+sparkfun/SparkFun BNO08x Cortex Based IMU@^1.0.6
 bakercp/PacketSerial@^1.4.0
+adafruit/Adafruit BNO055@^1.2.2
+budryerson/TFLI2C@^0.2.0
+adafruit/Adafruit Unified Sensor@^1.1.9

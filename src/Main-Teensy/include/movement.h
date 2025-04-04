@@ -9,11 +9,11 @@
 
 #define ANGULAR_SCALE 1.3
 
-// Define the Point struct
-struct Point {
-  double x;
-  double y;
-};
+// Already defined in vector.h
+// struct Point {
+//   double x;
+//   double y;
+// };
 
 namespace Direction {
 

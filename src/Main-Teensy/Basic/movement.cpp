@@ -57,7 +57,7 @@ void Movement::setConstantDirection(Direction::Constant params) {
 
 void Movement::setMoveToPointDirection(Direction::MoveToPoint params) {
     _targetdirection =
-        (params.destination - Vector(params.robotCoordinate)).angle();
+        (Vector::fromPoint(params.destination) - Vector(params.robotCoordinate)).angle;
 }
 
 void Movement::setLineTrackDirection(Direction::LineTrack params) {
@@ -91,7 +91,7 @@ void Movement::setMoveBearingToPoint(Bearing::MoveBearingToPoint params) {
 
     Vector current(params.robotCoordinate);
     Vector initial(_initialrobotcoordinate);
-    Vector final(params.destination);
+    Vector final(Vector::fromPoint(params.destination));
 
     double totalDistance = (final - initial).distance;
     double progress = totalDistance != 0 ? (current - initial).distance / totalDistance : 1.0;

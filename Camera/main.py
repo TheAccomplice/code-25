@@ -69,8 +69,8 @@ kf = KalmanFilter(F=F, B=B, H=H, Q=Q, R=R)
 
 
 
-setting = 'home'
-#setting = 'lab'
+#setting = 'home'
+setting = 'lab'
 
 
 sensor.reset()
@@ -127,9 +127,9 @@ if ID == 'robot2':
     ROI = (0, 0, 298, 240)
 
     if setting == 'lab':
-        red_thresh = [(0, 100, 21, 127, 14, 88)]
-        blue_thresh = [((14, 26, -16, -3, -14, -5))]
-        yellow_thresh = [(0, 100, -11, 127, 24, 127)]
+        red_thresh = [(48, 89, 5, 67, 19, 34)]
+        blue_thresh = [((0, 100, -128, 127, -128, -7))]
+        yellow_thresh = [(0, 100, -11, 13, 20, 70)]
 
     elif (setting == 'home'):
         red_thresh = [(28, 72, 19, 127, 7, 36)]
@@ -138,25 +138,25 @@ if ID == 'robot2':
 
 
 
-else:
-    centreAngleY = 121
-    centreAngleX = 162
-    centreY = 119
-    centreX = 159
-    CAMERA_CENTER = np.array((centreX,centreY))
+# else:
+#     centreAngleY = 121
+#     centreAngleX = 162
+#     centreY = 119
+#     centreX = 159
+#     CAMERA_CENTER = np.array((centreX,centreY))
 
 
-    if setting == 'lab':
-        red_thresh = [(0, 100, 21, 127, 14, 88)]
-        blue_thresh = [(0, 62, -128, 4, -128, -7)]
-        yellow_thresh = [(0, 100, -11, 127, 24, 127)]
+#     if setting == 'lab':
+#         red_thresh = [(0, 100, 21, 127, 14, 88)]
+#         blue_thresh = [(0, 62, -128, 4, -128, -7)]
+#         yellow_thresh = [(0, 100, -11, 127, 24, 127)]
 
-    elif (setting == 'home'):
-        red_thresh = [(28, 72, 19, 127, 7, 36)]
-        blue_thresh = [(15, 23, -13, -1, -128, -5)]
-        yellow_thresh = [(23, 100, -128, 8, 14, 127)]
+#     elif (setting == 'home'):
+#         red_thresh = [(28, 72, 19, 127, 7, 36)]
+#         blue_thresh = [(15, 23, -13, -1, -128, -5)]
+#         yellow_thresh = [(23, 100, -128, 8, 14, 127)]
 
-    ROI = (0, 0, 320, 240)
+#     ROI = (0, 0, 320, 240)
 
 
 

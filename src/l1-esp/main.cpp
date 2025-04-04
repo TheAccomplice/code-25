@@ -4,6 +4,7 @@
 
 #include "PacketSerial.h"
 #include "main.h"
+
 //#include "movement.h"
 #include "util.h"
 #include "shared.h"
@@ -53,5 +54,5 @@ void loop() {
 
   }
 Serial.println();
-delay(100)
+delay(100);
 }
