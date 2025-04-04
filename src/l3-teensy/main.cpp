@@ -202,8 +202,8 @@ void setup() {
     CameraTeensySerial.setStream(&Serial1);
     CameraTeensySerial.setPacketHandler(&receiveCameraTxData);
 
-    LidarTeensySerial.begin(&Serial2);
-    LidarTeensySerial.setPacketHandler(&receiveLidarTxData);
+    // LidarTeensySerial.begin(&Serial2);
+    // LidarTeensySerial.setPacketHandler(&receiveLidarTxData);
 
     TeensyTeensySerial.begin(&Serial3);
 
@@ -222,8 +222,7 @@ double backVariance = 2;
 double leftVariance = 2;
 double rightVariance = 2;
 
-#ifdef DEBUG
-#ifdef real
+#define DEBUG
 void loop() {
     double dt = loopTimeinMillis();
     CameraTeensySerial.update();
@@ -261,7 +260,7 @@ void loop() {
     processedValues.relativeBearing = -sensorValues.relativeBearing;
 
     //setup
-    processLidars();
+    // processLidars();
     // Serial.print("Bearing: ");
     // Serial.println(processedValues.relativeBearing);
 
@@ -279,6 +278,7 @@ void loop() {
     //     sensorValues.ball_relativeposition.x(),
     //     sensorValues.ball_relativeposition.y());
     // processedValues.ball_relativeposition = ballposition.updatePosition();
+    processedValues.ball_relativeposition = sensorValues.ball_relativeposition;
 
     Vector robotPosition = localize();
     processedValues.robot_position = {robotPosition.x(),robotPosition.y()};
@@ -354,143 +354,16 @@ void loop() {
     memcpy(buf, &processedValues, sizeof(processedValues));
     TeensyTeensySerial.send(buf, sizeof(buf));
 
-    // if (processedValues.ballExists == 1 ) {
-    //     if (sensorValues.ball_relativeposition.distance == 0) {
-    //         Serial.println("invalid");
-    //     } else {
-    //         ball_last_position_relative_to_robot = {sensorValues.ball_relativeposition.x(),
-    //         sensorValues.ball_relativeposition.y()};
-    //         Serial.print("yay");
-    //     }
-    // };
+    if (processedValues.ballExists == 1 ) {
+        if (sensorValues.ball_relativeposition.distance == 0) {
+            Serial.println("invalid");
+        } else {
+            ball_last_position_relative_to_robot = {sensorValues.ball_relativeposition.x(),
+            sensorValues.ball_relativeposition.y()};
+            Serial.print("yay");
+        }
+    };
 
     
     counter++;
 }
-#endif
-
-
-#ifdef test
-    double dt = loopTimeinMillis();
-    CameraTeensySerial.update();
-
-    LidarTeensySerial.update();
-    setReports();
-    getBNOreading();
-    // Serial.print("Relative Bearing: ");
-    // Serial.print(sensorValues.relativeBearing);
-    // Serial.print(" | ");
-
-    processedValues.bluegoal_relativeposition = sensorValues.bluegoal_relativeposition;
-    processedValues.bluegoal_relativeposition.distance = sensorValues.bluegoal_relativeposition.distance;
-    processedValues.yellowgoal_relativeposition = sensorValues.yellowgoal_relativeposition;
-    processedValues.yellowgoal_relativeposition.distance = sensorValues.yellowgoal_relativeposition.distance;
-    processedValues.relativeBearing = -sensorValues.relativeBearing;
-
-    //setup
-    processLidars();
-    // Serial.print("Bearing: ");
-    // Serial.println(processedValues.relativeBearing);
-
-    (processedValues.lidarConfidence[0] == 1) ? frontVariance = 3 : frontVariance = 400;
-    (processedValues.lidarConfidence[1] == 1) ? rightVariance = 3 : rightVariance = 400;
-    (processedValues.lidarConfidence[2] == 1) ? backVariance = 3 : backVariance = 400;
-    (processedValues.lidarConfidence[3] == 1) ? leftVariance = 0 : leftVariance = 400;
-
-    sensorfusion.updateConstants(frontVariance, backVariance, leftVariance,
-                                rightVariance, 10, 15);
-
-    // kalman commented out
-    // ballposition.updateConstants(dt / 1000);
-    // ballposition.updateSensorMeasurement(
-    //     sensorValues.ball_relativeposition.x(),
-    //     sensorValues.ball_relativeposition.y());
-    // processedValues.ball_relativeposition = ballposition.updatePosition();
-
-    Vector robotPosition = localize();
-    processedValues.robot_position = {robotPosition.x(),robotPosition.y()};
-
-    //must be below updatesensormesaurement
-    verifyingObjectExistance();
-    predict_ball_in_catchment();
-
-    #ifdef DEBUG
-    // Serial.print(" | bearing: ");
-    // printDouble(Serial, processedValues.relativeBearing, 3, 1);
-    // Serial.print(" | frontLidar: ");
-    // printDouble(Serial, processedValues.lidarDistance[0], 3, 1);
-    // Serial.print(" | rightLidar: ");
-    // printDouble(Serial, processedValues.lidarDistance[1], 3, 1);
-    // Serial.print(" | backLidar: ");
-    // printDouble(Serial, processedValues.lidarDistance[2], 3, 1);
-    // Serial.print(" | leftLidar: ");
-    // printDouble(Serial, processedValues.lidarDistance[3], 3, 1);
-
-    // Serial.print(" | frontLidarConf: ");
-    // printDouble(Serial, processedValues.lidarConfidence[0], 3, 1);
-    // Serial.print(" | rightLidarConf: ");
-    // printDouble(Serial, processedValues.lidarConfidence[1], 3, 1);
-    // Serial.print(" | backLidarConf: ");
-    // printDouble(Serial, processedValues.lidarConfidence[2], 3, 1);
-    // Serial.print(" | leftLidarConf: ");
-    // printDouble(Serial, processedValues.lidarConfidence[3], 3, 1);
-        
-    // Serial.print(" | attackGoalAngle: ");
-    // printDouble(Serial, processedValues.yellowgoal_relativeposition.angle, 3, 1);
-    // Serial.print(" | attackGoalDist: ");
-    // printDouble(Serial, processedValues.yellowgoal_relativeposition.distance, 3,
-    //             1);
-    // Serial.print(" | defenceGoalAngle: ");
-    // printDouble(Serial, processedValues.bluegoal_relativeposition.angle, 3, 1);
-    // Serial.print(" | defenceGoalDist: ");
-    // printDouble(Serial, processedValues.bluegoal_relativeposition.distance, 3, 1);
-    Serial.print(" | ballAngle: ");
-    printDouble(Serial, sensorValues.ball_relativeposition.angle, 3, 1);
-    Serial.print(" | ballDist: ");
-    printDouble(Serial, sensorValues.ball_relativeposition.distance, 3, 1);
-    // processed Values
-    Serial.print(" | ballExistence: ");
-    printDouble(Serial, processedValues.ballExists, 1, 1);
-    // Serial.print(" | attackGoal Existence: ");
-    // printDouble(Serial, processedValues.yellowgoal_exists, 1, 1);
-    // Serial.print(" | defenceGoal Existence: ");
-    // printDouble(Serial, processedValues.bluegoal_exists, 1, 1);
-    // // Location
-    // Serial.print(" | X_position: ");
-    // printDouble(Serial, processedValues.robot_position.x, 3, 1);
-    // Serial.print(" | Y_position: ");
-    // printDouble(Serial, processedValues.robot_position.y, 3, 1);
-
-    // Prediction Parameters
-    Serial.print(" | ball in catchment: ");
-    printDouble(Serial, processedValues.ball_in_catchment, 1, 1);
-    Serial.print(" | x_ball_postion to robot: ");
-    printDouble(Serial, ball_last_position_relative_to_robot.x, 1, 1);
-    Serial.print(" | y_ball postion to robot: ");
-    printDouble(Serial, ball_last_position_relative_to_robot.y, 1, 1);
-    
-
-    Serial.println("");
-    #endif
-
-    // delay(1000); //this is the problem
-
-    
-
-    byte buf[sizeof(teensytoTeensyTxPayload)];
-    memcpy(buf, &processedValues, sizeof(processedValues));
-    TeensyTeensySerial.send(buf, sizeof(buf));
-
-    // if (processedValues.ballExists == 1 ) {
-    //     if (sensorValues.ball_relativeposition.distance == 0) {
-    //         Serial.println("invalid");
-    //     } else {
-    //         ball_last_position_relative_to_robot = {sensorValues.ball_relativeposition.x(),
-    //         sensorValues.ball_relativeposition.y()};
-    //         Serial.print("yay");
-    //     }
-    // };
-
-    
-    counter++;
-#endif
