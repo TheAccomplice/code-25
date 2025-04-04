@@ -1,7 +1,9 @@
 #include <Arduino.h>
+#include <PacketSerial.h>
 #include "util.h"
 #include "main.h"
 
+PacketSerial TeensyTeensySerial;
 Point goalPos = {61.5, 0};
 Point receivedBallPos;  
 Point receivedBotPos;   
@@ -91,17 +93,17 @@ void movetoPoint(Point destination) {
         Direction::MoveToPoint{localisation, destination});
 }
 
-void setup() {
-    Serial.begin(115200); 
-    Serial2.begin(115200);
-    Serial3.begin(115200);
+void receiveTxData(const byte *buf, size_t size) {
+    // load payload
+    if (size != sizeof(processedValues)) {
+        Serial.print("Invalid data, size: ");
+        Serial.print(size);
+        Serial.println("");
+        return;
+    }
 
-    movement.initialize();
-}
+    memcpy(&processedValues, buf, sizeof(processedValues));
 
-void loop() {
-
-    
     //global bearing 
     double bearing = 0; //for now
     movement.setBearingSettings(-300,300,2,0,0);
@@ -155,3 +157,21 @@ void loop() {
     movement.drive(processedValues.robot_position);
 }
 
+}
+
+void setup() {
+    Serial.begin(115200); 
+    Serial1.begin(115200);
+    Serial2.begin(115200);
+    Serial3.begin(115200);
+
+    TeensyTeensySerial.setStream(&Serial1);
+    TeensyTeensySerial.setPacketHandler(&receiveTxData);
+
+    movement.initialize();
+}
+
+void loop() {
+    TeensyTeensySerial.update();
+}
+    
