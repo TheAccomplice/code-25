@@ -10,23 +10,17 @@
 
 double frontMirrorMapping(double distance) {
     if (distance != 500) {
-        float dd = distance * distance;
-        float ddd = dd * distance;
-        float dddd = ddd * distance;
-        return -7.81250000e-07 *dddd +
-                3.14385417e-04 * ddd +
-                -4.70777480e-02 * dd +
-                3.40669600 * distance +
-                2.65758583;
-
-        // return (5.39617219 * powf(10, -7) * powf(distance, 5) -
-        //         1.61827053 * powf(10, -4) * powf(distance, 4) +
-        //         1.88452202 * powf(10, -2) * powf(distance, 3) -
-        //         1.04993865 * powf(10, 0) * powf(distance, 2) +
-        //         2.82679699 * 10 * distance - 
-        //         2.83240269 * powf(10, 2));
-    } else
+        double dd = distance * distance;
+        double ddd = dd * distance;
+        double dddd = ddd * distance;
+        return (-6.34108659e-06 * dddd +
+                2.73205588e-03  * ddd +
+                -3.80029780e-01 * dd +
+                2.21386210e+01 * distance +
+                -4.39939469e+02);
+    } else {
         return 0;
+    }
 }
 
 double ballMirrorMapping(double distance) {

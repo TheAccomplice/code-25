@@ -32,6 +32,7 @@ struct SensorValues {
     int relativeBearing;
     Vector yellowgoal_relativeposition;
     Vector bluegoal_relativeposition;
+    double ball_dist;
     Vector ball_relativeposition;
     int lidardist[4];
 };

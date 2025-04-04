@@ -87,7 +87,7 @@ void receiveCameraTxData(const byte *buf, size_t size) {
         payload.cameraTxData.values[3];
     #endif
     sensorValues.ball_relativeposition.angle = payload.cameraTxData.values[4];
-    sensorValues.ball_relativeposition.distance =
+    sensorValues.ball_relativeposition.distance = sensorValues.ball_dist =
         payload.cameraTxData.values[5];
     //sensorValues.ball_relativeposition.distance = ballMirrorMapping(sensorValues.ball_relativeposition.distance);
     sensorValues.ball_relativeposition.distance = frontMirrorMapping(sensorValues.ball_relativeposition.distance);
@@ -321,9 +321,11 @@ void loop() {
     printDouble(Serial, sensorValues.ball_relativeposition.angle, 3, 1);
     Serial.print(" | ballDist: ");
     printDouble(Serial, sensorValues.ball_relativeposition.distance, 3, 1);
+    Serial.print(", ");
+    printDouble(Serial, sensorValues.ball_dist, 3, 1);
     // processed Values
-    Serial.print(" | ballExistence: ");
-    printDouble(Serial, processedValues.ballExists, 1, 1);
+    // Serial.print(" | ballExistence: ");
+    // printDouble(Serial, processedValues.ballExists, 1, 1);
     // Serial.print(" | attackGoal Existence: ");
     // printDouble(Serial, processedValues.yellowgoal_exists, 1, 1);
     // Serial.print(" | defenceGoal Existence: ");

@@ -50,6 +50,8 @@ void loop() {
     Serial.print(" | ");
     Serial.print("T: ");
     Serial.print(lightArray.LDRThresholds[i]);
+    Serial.print(" | ");
+    
 
 
   }
