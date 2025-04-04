@@ -3,6 +3,7 @@
 
 #include <iostream>
 
+
 // Point in cartesian coordinates
 struct Point {
     double x;

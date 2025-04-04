@@ -64,8 +64,8 @@ class Movement {
  public:
   Movement();
 
-  void updateParameters(double actualBearing, double actualDirection,
-                        double actualVelocity);
+  void updateParameters(double actualbearing, double actualdirection,
+                        double actualvelocity);
 
   void initialize();
   // Set relevant parameters
@@ -94,34 +94,34 @@ class Movement {
   std::vector<double> getMotorValues();
 
   // Add the missing setBearing method to set _lastBearing
-  void setBearing(double bearing) { _lastBearing = bearing; }
+  void setBearing(double bearing) { _lastbearing = bearing; }
 
  private:
   // Parameters
-  double _targetDirection;
-  double _targetBearing;
-  double _targetVelocity;
+  double _targetdirection;
+  double _targetbearing;
+  double _targetvelocity;
 
   // Actual moving parameters
-  double _movingDirection;
-  double _movingBearing;
-  double _movingVelocity;
+  double _movingdirection;
+  double _movingbearing;
+  double _movingvelocity;
 
   // Past values
-  double _lastDirection;
-  double _lastBearing;
-  double _lastVelocity;
+  double _lastdirection;
+  double _lastbearing;
+  double _lastvelocity;
 
   // For Bearing::MoveBearingToPoint and MoveToPoint
   Point _finalDestination;
-  double _initialBearing;
-  double _finalBearing;
-  Vector _initialRobotCoordinate;
+  double _initialbearing;
+  double _finalbearing;
+  Vector _initialrobotcoordinate;
 
   // Actual parameters
   double _actualVelocity;
-  double _actualBearing;
-  double _actualDirection;
+  double _actualbearing;
+  double _actualdirection;
 };
 
 #endif

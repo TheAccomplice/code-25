@@ -48,7 +48,7 @@ void Movement::initialize() {
 void Movement::updateParameters(double bearing, double direction, double velocity) {
     _actualbearing = bearing;
     _actualdirection = direction;
-    _actualvelocity = velocity;
+    _actualVelocity = velocity;
 }
 
 void Movement::setConstantDirection(Direction::Constant params) {
@@ -56,9 +56,8 @@ void Movement::setConstantDirection(Direction::Constant params) {
 }
 
 void Movement::setMoveToPointDirection(Direction::MoveToPoint params) {
-    Vector destVec(params.destination);
-    Vector robotVec(params.robotCoordinate);
-    _targetdirection = (destVec - robotVec).angle;
+    _targetdirection =
+        (params.destination - Vector(params.robotCoordinate)).angle();
 }
 
 void Movement::setLineTrackDirection(Direction::LineTrack params) {
@@ -73,7 +72,7 @@ void Movement::setConstantVelocity(Velocity::Constant params) {
 }
 
 void Movement::setStopAtPointVelocity(Velocity::StopAtPoint params) {
-    double correction = stopAtPointController.advance(params.errordistance);
+    double correction = stopAtPointController.advance(params.errorDistance);
     _targetvelocity = constrain(abs(correction), params.minSpeed, params.maxSpeed);
 }
 

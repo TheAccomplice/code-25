@@ -1,6 +1,6 @@
 #include "PacketSerial.h"
 #include "SPI.h"
-//#include "Adafruit_BNO08x.h"
+#include "SparkFun_BNO08x_Arduino_Library.h"
 #include "vector.h"
 #include <Arduino.h>
 #include <PacketSerial.h>
@@ -23,9 +23,9 @@ DMAMEM BallPosition ballposition;
 
 
 PacketSerial CameraTeensySerial;
-// PacketSerial TeensyTeensySerial;
+PacketSerial TeensyTeensySerial;
 // PacketSerial LidarTeensySerial;
-//Adafruit_BNO08x bno;
+BNO08x bno;
 
 
 
@@ -96,15 +96,15 @@ void receiveCameraTxData(const byte *buf, size_t size) {
 }
 
 void getBNOreading() {
-    // bno.enableGyroIntegratedRotationVector();
-    // if (bno.getSensorEvent() == true) {
-    //     if (bno.getSensorEventID() ==
-    //         SENSOR_REPORTID_GYRO_INTEGRATED_ROTATION_VECTOR) {
-    //         sensorValues.relativeBearing =
-    //             bno.getGyroIntegratedRVK()
-    //             * 180.0 * 0.8; // Convert yaw / heading to degree
-    //     }
-    //}
+    bno.enableGyroIntegratedRotationVector();
+    if (bno.getSensorEvent() == true) {
+        if (bno.getSensorEventID() ==
+            SENSOR_REPORTID_GYRO_INTEGRATED_ROTATION_VECTOR) {
+            sensorValues.relativeBearing =
+                bno.getGyroIntegratedRVK()
+                * 180.0 * 0.8; // Convert yaw / heading to degree
+        }
+    }
 }
 
 void setReports(void) {
@@ -192,19 +192,19 @@ void verifyingObjectExistance() {
 
 void setup() {
     Serial1.begin(115200);
-    Serial5.begin(500000);
+    Serial3.begin(115200);
     // Serial4.begin(115200);
     Serial.begin(9600);
     Wire.begin();
     Wire.setClock(100000);
-    //bno.begin(0x4A, Wire);
+    bno.begin(0x4A, Wire);
     CameraTeensySerial.setStream(&Serial1);
     CameraTeensySerial.setPacketHandler(&receiveCameraTxData);
 
     //LidarTeensySerial.begin(&Serial4);
     //LidarTeensySerial.setPacketHandler(&receiveLidarTxData);
 
-    //TeensyTeensySerial.begin(&Serial5);
+    TeensyTeensySerial.begin(&Serial3);
 
     setReports();
 
@@ -344,7 +344,7 @@ void loop() {
 
     byte buf[sizeof(teensytoTeensyTxPayload)];
     memcpy(buf, &processedValues, sizeof(processedValues));
-    //TeensyTeensySerial.send(buf, sizeof(buf));
+    TeensyTeensySerial.send(buf, sizeof(buf));
 
     if (processedValues.ballExists == 1 ) {
         if (sensorValues.ball_relativeposition.distance == 0) {

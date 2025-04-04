@@ -2,6 +2,7 @@
 #define SHARED_H
 
 #include "vector.h"
+#include <deque>
 
 struct TimeControl {
     double now = 0;
@@ -27,18 +28,22 @@ static double loopTimeinMillis() {
 
 class movingAvg{
     private:
+        #include <deque>
+
+        #include <deque>
+
         double _scale = 1.0;
         std::deque<double> dq;
         double sum = 0;
         int _size = 100;
-    
-    public:
-        //constructor
-        movingAvg(int size = 100) : _size(size){}
 
-        void setScale(double scale){
-            _scale = scale;
-        }
+        public:
+            //constructor
+            movingAvg(int size = 100) : _size(size){}
+
+            void setScale(double scale){
+                _scale = scale;
+            }
         
         //pop front
         void pop() {
