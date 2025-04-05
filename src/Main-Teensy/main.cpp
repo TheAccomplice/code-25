@@ -178,13 +178,13 @@ void loop() {
     // Case 2.0: ball in catchment area, zoom towards goal
     else if (processedValues.is_ball_in_catchment == 1){
         //does yellow goal exist? If yes
-        if (processedValues.yellowgoal_exists == 1){
-            movement.setConstantDirection(Direction::Constant{processedValues.yellowgoal_relativeposition.angle});
+        if (processedValues.bluegoal_exists == 1){
+            movement.setConstantDirection(Direction::Constant{processedValues.bluegoal_relativeposition.angle});
             movement.setConstantVelocity(Velocity::Constant{400});
             movement.setConstantBearing(Bearing::Constant{bearing});
         }
-        //if yellow goal does not exist, then move to point (0,120), which is opponent goal
-        else if (processedValues.yellowgoal_exists == 0){
+        //if blue goal does not exist, then move to point (0,120), which is opponent goal
+        else if (processedValues.bluegoal_exists == 0){
             //gg
             movetoPoint({0,120});
 
@@ -211,6 +211,11 @@ void loop() {
         //             70 - 20),
         //         2.5)});
         // movement.setConstantBearing(Bearing::Constant{bearing});
+    }
+    else if (processedValues.yellowgoal_exists == 1){
+        movement.setConstantDirection(Direction::Constant{processedValues.yellowgoal_relativeposition.angle});
+        movement.setConstantVelocity(Velocity::Constant{400});
+        movement.setConstantBearing(Bearing::Constant{bearing});
     }
     // Case 4.0: ball does not exist. So move to default position
     else if (processedValues.ballExists == 0 && processedValues.is_ball_in_catchment == 0){
