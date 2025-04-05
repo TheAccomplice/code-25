@@ -68,23 +68,23 @@ void receiveCameraTxData(const byte *buf, size_t size) {
 #endif
 
     // #ifdef YELLOW_GOAL_ATTACK
-    // sensorValues.bluegoal_relativeposition.angle =
-    //     payload.cameraTxData.values[0];
-    // sensorValues.bluegoal_relativeposition.distance =
-    //     payload.cameraTxData.values[1];
-    // sensorValues.yellowgoal_relativeposition.angle =
-    //     payload.cameraTxData.values[2];
-    // sensorValues.yellowgoal_relativeposition.distance =
-    //     payload.cameraTxData.values[3];
-    // #ifdef BLUE_GOAL_ATTACK
-    sensorValues.yellowgoal_relativeposition.angle =
-        payload.cameraTxData.values[0];
-    sensorValues.yellowgoal_relativeposition.distance =
-        payload.cameraTxData.values[1];
     sensorValues.bluegoal_relativeposition.angle =
-        payload.cameraTxData.values[2];
+        payload.cameraTxData.values[0];
     sensorValues.bluegoal_relativeposition.distance =
+        payload.cameraTxData.values[1];
+    sensorValues.yellowgoal_relativeposition.angle =
+        payload.cameraTxData.values[2];
+    sensorValues.yellowgoal_relativeposition.distance =
         payload.cameraTxData.values[3];
+    // #ifdef BLUE_GOAL_ATTACK
+    // sensorValues.yellowgoal_relativeposition.angle =
+    //     payload.cameraTxData.values[0];
+    // sensorValues.yellowgoal_relativeposition.distance =
+    //     payload.cameraTxData.values[1];
+    // sensorValues.bluegoal_relativeposition.angle =
+    //     payload.cameraTxData.values[2];
+    // sensorValues.bluegoal_relativeposition.distance =
+    //     payload.cameraTxData.values[3];
  
  
     sensorValues.ball_relativeposition.angle = payload.cameraTxData.values[4];

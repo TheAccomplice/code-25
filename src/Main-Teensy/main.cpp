@@ -60,6 +60,7 @@ Movement movement; // need to define this in .cpp file
 //***************** */
 
 
+
 double ballAngleOffset(double distance, double direction) {
     // offset multiplier https://www.desmos.com/calculator/8d2ztl2zf8
 
@@ -159,9 +160,18 @@ void loop() {
     movement.setBearingSettings(-300,300,2,0,0);
 
     // Case 1.0: robot encounters line, line rejection
-    if (processedValues.onLine == 1){
-        movement.setConstantDirection(Direction::Constant{180-processedValues.angleBisector});
-        movement.setConstantVelocity(Velocity::Constant{500});
+    // if (processedValues.onLine == 1){
+    //     movement.setConstantDirection(Direction::Constant{180-processedValues.relativeBearing});//change
+    //     movement.setConstantVelocity(Velocity::Constant{200});
+    //     movement.setConstantBearing(Bearing::Constant{-processedValues.relativeBearing});
+    // }
+    if (processedValues.onLine == 1) {
+        // Calculate a direction that's opposite to where the line is detected
+        double escapeAngle = clipAngleto180degrees(processedValues.relativeBearing + 180);
+
+        // Move slightly away from the line, more cautiously
+        movement.setConstantDirection(Direction::Constant{escapeAngle});
+        movement.setConstantVelocity(Velocity::Constant{150}); // lower speed for control
         movement.setConstantBearing(Bearing::Constant{bearing});
     }
 
@@ -180,31 +190,36 @@ void loop() {
 
         }
     }
-    // Case 3.0: ball exists but not in catchment area. Curve towards ball
+    // Case 3.0: ball exists but not in catchment area. G towards ball
     else if (processedValues.ballExists == 1 && processedValues.is_ball_in_catchment == 0){
+        movement.setConstantVelocity(Velocity::Constant{movement.applySigmoid(
+            1000, 300,
+            processedValues.ball_relativeposition.distance / 20, 2.5)});
+        //movement.setConstantBearing(Bearing::Constant{processedValues.relativeBearing}); //??
+        
         // curve towards ball
-        movement.setConstantDirection(Direction::Constant{
-                ballAngleOffset(processedValues.ball_relativeposition.distance,
-                                processedValues.ball_relativeposition.angle) +
-                                processedValues.ball_relativeposition.angle})
-        movement.setconstantVelocity(
-                Velocity::constant{movement.applySigmoid(
-                500, 300,
-                curveAroundBallMultiplier(
-                    processedValues.ball_relativeposition.angle,
-                    processedValues.ball_relativeposition.distance - 20,
-                    70 - 20),
-                2.5)});
-        movement.setConstantBearing(Bearing::Constant{bearing});
+        // movement.setConstantDirection(Direction::Constant{
+        //         ballAngleOffset(processedValues.ball_relativeposition.distance,
+        //                         processedValues.ball_relativeposition.angle) +
+        //                         processedValues.ball_relativeposition.angle})
+        // movement.setconstantVelocity(
+        //         Velocity::constant{movement.applySigmoid(
+        //         500, 300,
+        //         curveAroundBallMultiplier(
+        //             processedValues.ball_relativeposition.angle,
+        //             processedValues.ball_relativeposition.distance - 20,
+        //             70 - 20),
+        //         2.5)});
+        // movement.setConstantBearing(Bearing::Constant{bearing});
     }
     // Case 4.0: ball does not exist. So move to default position
     else if (processedValues.ballExists == 0 && processedValues.is_ball_in_catchment == 0){
         movetoPoint({0,-20});
-        movement.setConstantBearing(Bearing::Constant{bearing});
+        //movement.setConstantBearing(Bearing::Constant{bearing});
     }
 
     //drive code
-    movement.drive(processedValues.robot_position);
+    movement.drive(processedValues.robot_position.toPoint());
 }
 
     // Serial.print("On line: ");
