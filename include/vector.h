@@ -26,6 +26,10 @@ class Vector {
 
     static Vector fromPoint(Point point);
 
+    Point toPoint() const {
+        return {x(), y()};
+    }
+
     double angle;
     double distance;
 

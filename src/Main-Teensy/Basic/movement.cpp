@@ -1,20 +1,21 @@
 #include "movement.h"
 #include "vector.h"
 #include "util.h"
+#include "shared.h"
 
 // Motor pin definitions
 #define FL_PWM_PIN 18
-#define FL_INA_PIN 17
 #define FL_INB_PIN 19
+#define FL_INA_PIN 17
 #define BL_PWM_PIN 14
-#define BL_INA_PIN 13
-#define BL_INB_PIN 15
+#define BL_INB_PIN 13
+#define BL_INA_PIN 15
 #define FR_PWM_PIN 6 
-#define FR_INA_PIN 9 //fr check direction
-#define FR_INB_PIN 5
+#define FR_INB_PIN 9 //fr check direction
+#define FR_INA_PIN 5
 #define BR_PWM_PIN 11
-#define BR_INA_PIN 10
-#define BR_INB_PIN 12
+#define BR_INB_PIN 10
+#define BR_INA_PIN 12
 
 // Motor multipliers
 #define FL_MULTIPLIER 1.0

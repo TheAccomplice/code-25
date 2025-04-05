@@ -11,6 +11,7 @@
 #include "sensorfusion.h"
 #include "ballposition.h"
 #include "config.h"
+#include "shared.h"
 
 #define TEENSY
 
@@ -66,18 +67,17 @@ void receiveCameraTxData(const byte *buf, size_t size) {
     // // Serial.println("");
 #endif
 
-    #ifdef YELLOW_GOAL_ATTACK
-    sensorValues.bluegoal_relativeposition.angle =
-        payload.cameraTxData.values[0];
-    sensorValues.bluegoal_relativeposition.distance =
-        payload.cameraTxData.values[1];
+    // #ifdef YELLOW_GOAL_ATTACK
+    // sensorValues.bluegoal_relativeposition.angle =
+    //     payload.cameraTxData.values[0];
+    // sensorValues.bluegoal_relativeposition.distance =
+    //     payload.cameraTxData.values[1];
+    // sensorValues.yellowgoal_relativeposition.angle =
+    //     payload.cameraTxData.values[2];
+    // sensorValues.yellowgoal_relativeposition.distance =
+    //     payload.cameraTxData.values[3];
+    // #ifdef BLUE_GOAL_ATTACK
     sensorValues.yellowgoal_relativeposition.angle =
-        payload.cameraTxData.values[2];
-    sensorValues.yellowgoal_relativeposition.distance =
-        payload.cameraTxData.values[3];
-    #endif
-    #ifdef BLUE_GOAL_ATTACK
-    sensorValues.yellowgoal_relativeposition.angle =
         payload.cameraTxData.values[0];
     sensorValues.yellowgoal_relativeposition.distance =
         payload.cameraTxData.values[1];
@@ -85,7 +85,8 @@ void receiveCameraTxData(const byte *buf, size_t size) {
         payload.cameraTxData.values[2];
     sensorValues.bluegoal_relativeposition.distance =
         payload.cameraTxData.values[3];
-    #endif
+ 
+ 
     sensorValues.ball_relativeposition.angle = payload.cameraTxData.values[4];
     sensorValues.ball_relativeposition.distance = sensorValues.ball_dist =
         payload.cameraTxData.values[5];
@@ -120,9 +121,9 @@ void setReports(void) {
 }
 
 void predict_ball_in_catchment(){
-    if (ball_last_position_relative_to_robot.x < 10 && 
-        ball_last_position_relative_to_robot.x > -10 &&
-        ball_last_position_relative_to_robot.y < 40 &&
+    if (ball_last_position_relative_to_robot.x < 13 && 
+        ball_last_position_relative_to_robot.x > 0 &&
+        ball_last_position_relative_to_robot.y < 50 &&
         ball_last_position_relative_to_robot.y > 2 &&
         processedValues.ballExists == 0){
             processedValues.ball_in_catchment = 1;
@@ -205,7 +206,7 @@ void setup() {
     // LidarTeensySerial.begin(&Serial2);
     // LidarTeensySerial.setPacketHandler(&receiveLidarTxData);
 
-    TeensyTeensySerial.begin(&Serial3);
+    TeensyTeensySerial.setStream(&Serial3);
 
     setReports();
 
@@ -264,13 +265,13 @@ void loop() {
     // Serial.print("Bearing: ");
     // Serial.println(processedValues.relativeBearing);
 
-    (processedValues.lidarConfidence[0] == 1) ? frontVariance = 3 : frontVariance = 400;
-    (processedValues.lidarConfidence[1] == 1) ? rightVariance = 3 : rightVariance = 400;
-    (processedValues.lidarConfidence[2] == 1) ? backVariance = 3 : backVariance = 400;
-    (processedValues.lidarConfidence[3] == 1) ? leftVariance = 0 : leftVariance = 400;
+    // (processedValues.lidarConfidence[0] == 1) ? frontVariance = 3 : frontVariance = 400;
+    // (processedValues.lidarConfidence[1] == 1) ? rightVariance = 3 : rightVariance = 400;
+    // (processedValues.lidarConfidence[2] == 1) ? backVariance = 3 : backVariance = 400;
+    // (processedValues.lidarConfidence[3] == 1) ? leftVariance = 0 : leftVariance = 400;
 
-    sensorfusion.updateConstants(frontVariance, backVariance, leftVariance,
-                                rightVariance, 10, 15);
+    // sensorfusion.updateConstants(frontVariance, backVariance, leftVariance,
+    //                             rightVariance, 10, 15);
 
     // kalman commented out
     // ballposition.updateConstants(dt / 1000);

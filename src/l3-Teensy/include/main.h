@@ -9,24 +9,37 @@
 #include "config.h"
 #include "util.h"
 #include "vector.h"
+#include "shared.h"
 
-struct ProcessedValues {
-    Vector ball_relativeposition;
-    Vector yellowgoal_relativeposition;
-    Vector bluegoal_relativeposition;
-    int ballExists = 0;
-    int ball_in_catchment = 0;
-    int yellowgoal_exists = 0;
-    int bluegoal_exists = 0;
-    int lidarDistance[4];
-    double lidarConfidence[4];
-    int relativeBearing;
-    Point robot_position;
-    double past_true_x_left = 0;
-    double past_true_x_right = 0;
-    double past_true_y_front = 0;
-    double past_true_y_back = 0;
-};
+// struct ProcessedValues {
+//     //relative to robot
+//     Vector ball_relativeposition;
+//     Vector yellowgoal_relativeposition;
+//     Vector bluegoal_relativeposition;
+//     //relative to field, not used?
+//     Vector ball_actualposition;
+//     Vector yellowgoal_actualposition;
+//     Vector bluegoal_actualposition;
+//     Vector robot_position;
+
+//     int ballExists = 0;
+//     int ball_in_catchment = 0;
+//     int yellowgoal_exists = 0;
+//     int bluegoal_exists = 0;
+//     int lidarDistance[4];
+//     double lidarConfidence[4];
+//     double bearing_relative_to_field;
+//     int is_ball_in_catchment = 0;
+//     int relativeBearing;
+//     int onLine = 0;
+//     float angleBisector;
+//     float depthinLine;
+//     double depth_in_line;
+//     // double past_true_x_left = 0;
+//     // double past_true_x_right = 0;
+//     // double past_true_y_front = 0;
+//     // double past_true_y_back = 0;
+// };
 
 struct SensorValues {
     int relativeBearing;

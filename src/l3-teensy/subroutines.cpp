@@ -62,168 +62,168 @@ Vector localizeWithBothGoals() {
     return (localizeWithDefensiveGoal() + localizeWithOffensiveGoal()) / 2;
 };
 
-void processLidars() {
-    double x_leftrelativetofield = 0;
-    double x_rightrelativetofield = 0;
-    double y_frontrelativetofield = 0;
-    double y_backrelativetofield = 0;
-    Point CameraPosition;
+// void processLidars() {
+//     double x_leftrelativetofield = 0;
+//     double x_rightrelativetofield = 0;
+//     double y_frontrelativetofield = 0;
+//     double y_backrelativetofield = 0;
+//     Point CameraPosition;
 
-    // DELELETE THIS ****
-    //processedValues.relativeBearing = 0;
-    // *************************
+//     // DELELETE THIS ****
+//     //processedValues.relativeBearing = 0;
+//     // *************************
     
-    for (int i = 0; i < 4; i++) {
-        processedValues.lidarDistance[i] =
-            sensorValues.lidardist[i] + LIDARSMEASUREMENTOFFSET;
-    }
+//     for (int i = 0; i < 4; i++) {
+//         processedValues.lidarDistance[i] =
+//             sensorValues.lidardist[i] + LIDARSMEASUREMENTOFFSET;
+//     }
 
-    // compensating for bearing of robot
-    if (sensorValues.relativeBearing <= 45 && sensorValues.relativeBearing > -45) {
-        x_leftrelativetofield = (processedValues.lidarDistance[3] +
-                                 X_AXIS_LIDARS_POSITIONAL_OFFSET) *
-                                cosd(sensorValues.relativeBearing);
-        x_rightrelativetofield = (processedValues.lidarDistance[1] +
-                                  X_AXIS_LIDARS_POSITIONAL_OFFSET) *
-                                 cosd(sensorValues.relativeBearing);
-        y_frontrelativetofield = (processedValues.lidarDistance[0] +
-                                  Y_AXIS_LIDARS_POSITIONAL_OFFSET) *
-                                 cosd(sensorValues.relativeBearing);
-        y_backrelativetofield = (processedValues.lidarDistance[2] +
-                                 Y_AXIS_LIDARS_POSITIONAL_OFFSET) *
-                                cosd(sensorValues.relativeBearing);
-    } else if (sensorValues.relativeBearing > 45 && sensorValues.relativeBearing <= 135) {
-        x_leftrelativetofield = (processedValues.lidarDistance[2] +
-                                 X_AXIS_LIDARS_POSITIONAL_OFFSET) *
-                                cosd(sensorValues.relativeBearing - 90);
-        x_rightrelativetofield = (processedValues.lidarDistance[0] +
-                                  X_AXIS_LIDARS_POSITIONAL_OFFSET) *
-                                 cosd(sensorValues.relativeBearing - 90);
-        y_frontrelativetofield = (processedValues.lidarDistance[3] +
-                                  Y_AXIS_LIDARS_POSITIONAL_OFFSET) *
-                                 cosd(sensorValues.relativeBearing - 90);
-        y_backrelativetofield =
-            (processedValues.lidarDistance[1] +
-             Y_AXIS_LIDARS_POSITIONAL_OFFSET) *
-            cosd(clipAngleto180degrees(sensorValues.relativeBearing - 90));
-    } else if (sensorValues.relativeBearing > 135 ||
-               sensorValues.relativeBearing <= -135) {
-        x_leftrelativetofield =
-            (processedValues.lidarDistance[1] +
-             X_AXIS_LIDARS_POSITIONAL_OFFSET) *
-            cosd(clipAngleto180degrees(sensorValues.relativeBearing - 180));
-        x_rightrelativetofield =
-            (processedValues.lidarDistance[3] +
-             X_AXIS_LIDARS_POSITIONAL_OFFSET) *
-            cosd(clipAngleto180degrees(sensorValues.relativeBearing - 180));
-        y_frontrelativetofield =
-            (processedValues.lidarDistance[2] +
-             Y_AXIS_LIDARS_POSITIONAL_OFFSET) *
-            cosd(clipAngleto180degrees(sensorValues.relativeBearing - 180));
-        y_backrelativetofield =
-            (processedValues.lidarDistance[0] +
-             Y_AXIS_LIDARS_POSITIONAL_OFFSET) *
-            cosd(clipAngleto180degrees(sensorValues.relativeBearing - 180));
-    } else if (sensorValues.relativeBearing <= -45 &&
-               sensorValues.relativeBearing > -135) {
-        x_leftrelativetofield = (processedValues.lidarDistance[0] +
-                                 X_AXIS_LIDARS_POSITIONAL_OFFSET) *
-                                cosd(sensorValues.relativeBearing + 90);
-        x_rightrelativetofield = (processedValues.lidarDistance[2] +
-                                  X_AXIS_LIDARS_POSITIONAL_OFFSET) *
-                                 cosd(sensorValues.relativeBearing + 90);
-        y_frontrelativetofield = (processedValues.lidarDistance[1] +
-                                  Y_AXIS_LIDARS_POSITIONAL_OFFSET) *
-                                 cosd(sensorValues.relativeBearing + 90);
-        y_backrelativetofield = (processedValues.lidarDistance[3] +
-                                 Y_AXIS_LIDARS_POSITIONAL_OFFSET) *
-                                cosd(sensorValues.relativeBearing + 90);
-    }
+//     // compensating for bearing of robot
+//     if (sensorValues.relativeBearing <= 45 && sensorValues.relativeBearing > -45) {
+//         x_leftrelativetofield = (processedValues.lidarDistance[3] +
+//                                  X_AXIS_LIDARS_POSITIONAL_OFFSET) *
+//                                 cosd(sensorValues.relativeBearing);
+//         x_rightrelativetofield = (processedValues.lidarDistance[1] +
+//                                   X_AXIS_LIDARS_POSITIONAL_OFFSET) *
+//                                  cosd(sensorValues.relativeBearing);
+//         y_frontrelativetofield = (processedValues.lidarDistance[0] +
+//                                   Y_AXIS_LIDARS_POSITIONAL_OFFSET) *
+//                                  cosd(sensorValues.relativeBearing);
+//         y_backrelativetofield = (processedValues.lidarDistance[2] +
+//                                  Y_AXIS_LIDARS_POSITIONAL_OFFSET) *
+//                                 cosd(sensorValues.relativeBearing);
+//     } else if (sensorValues.relativeBearing > 45 && sensorValues.relativeBearing <= 135) {
+//         x_leftrelativetofield = (processedValues.lidarDistance[2] +
+//                                  X_AXIS_LIDARS_POSITIONAL_OFFSET) *
+//                                 cosd(sensorValues.relativeBearing - 90);
+//         x_rightrelativetofield = (processedValues.lidarDistance[0] +
+//                                   X_AXIS_LIDARS_POSITIONAL_OFFSET) *
+//                                  cosd(sensorValues.relativeBearing - 90);
+//         y_frontrelativetofield = (processedValues.lidarDistance[3] +
+//                                   Y_AXIS_LIDARS_POSITIONAL_OFFSET) *
+//                                  cosd(sensorValues.relativeBearing - 90);
+//         y_backrelativetofield =
+//             (processedValues.lidarDistance[1] +
+//              Y_AXIS_LIDARS_POSITIONAL_OFFSET) *
+//             cosd(clipAngleto180degrees(sensorValues.relativeBearing - 90));
+//     } else if (sensorValues.relativeBearing > 135 ||
+//                sensorValues.relativeBearing <= -135) {
+//         x_leftrelativetofield =
+//             (processedValues.lidarDistance[1] +
+//              X_AXIS_LIDARS_POSITIONAL_OFFSET) *
+//             cosd(clipAngleto180degrees(sensorValues.relativeBearing - 180));
+//         x_rightrelativetofield =
+//             (processedValues.lidarDistance[3] +
+//              X_AXIS_LIDARS_POSITIONAL_OFFSET) *
+//             cosd(clipAngleto180degrees(sensorValues.relativeBearing - 180));
+//         y_frontrelativetofield =
+//             (processedValues.lidarDistance[2] +
+//              Y_AXIS_LIDARS_POSITIONAL_OFFSET) *
+//             cosd(clipAngleto180degrees(sensorValues.relativeBearing - 180));
+//         y_backrelativetofield =
+//             (processedValues.lidarDistance[0] +
+//              Y_AXIS_LIDARS_POSITIONAL_OFFSET) *
+//             cosd(clipAngleto180degrees(sensorValues.relativeBearing - 180));
+//     } else if (sensorValues.relativeBearing <= -45 &&
+//                sensorValues.relativeBearing > -135) {
+//         x_leftrelativetofield = (processedValues.lidarDistance[0] +
+//                                  X_AXIS_LIDARS_POSITIONAL_OFFSET) *
+//                                 cosd(sensorValues.relativeBearing + 90);
+//         x_rightrelativetofield = (processedValues.lidarDistance[2] +
+//                                   X_AXIS_LIDARS_POSITIONAL_OFFSET) *
+//                                  cosd(sensorValues.relativeBearing + 90);
+//         y_frontrelativetofield = (processedValues.lidarDistance[1] +
+//                                   Y_AXIS_LIDARS_POSITIONAL_OFFSET) *
+//                                  cosd(sensorValues.relativeBearing + 90);
+//         y_backrelativetofield = (processedValues.lidarDistance[3] +
+//                                  Y_AXIS_LIDARS_POSITIONAL_OFFSET) *
+//                                 cosd(sensorValues.relativeBearing + 90);
+//     }
 
-    if ((sensorValues.yellowgoal_relativeposition.distance < 90 &&
-         processedValues.yellowgoal_exists == 1) ||
-        (processedValues.yellowgoal_exists == 1 &&
-         processedValues.bluegoal_exists == 0)) {
-        CameraPosition = {localizeWithOffensiveGoal().x(),
-                          localizeWithOffensiveGoal().y()};
-    } else if ((sensorValues.bluegoal_relativeposition.distance < 90 &&
-                processedValues.bluegoal_exists == 1) ||
-               (processedValues.bluegoal_exists == 1 &&
-                processedValues.yellowgoal_exists == 0)) {
-        CameraPosition = {localizeWithDefensiveGoal().x(),
-                          localizeWithDefensiveGoal().y()};
-    } else {
-        CameraPosition = {localizeWithBothGoals().x(),
-                          localizeWithBothGoals().y()};
-    }
+//     if ((sensorValues.yellowgoal_relativeposition.distance < 90 &&
+//          processedValues.yellowgoal_exists == 1) ||
+//         (processedValues.yellowgoal_exists == 1 &&
+//          processedValues.bluegoal_exists == 0)) {
+//         CameraPosition = {localizeWithOffensiveGoal().x(),
+//                           localizeWithOffensiveGoal().y()};
+//     } else if ((sensorValues.bluegoal_relativeposition.distance < 90 &&
+//                 processedValues.bluegoal_exists == 1) ||
+//                (processedValues.bluegoal_exists == 1 &&
+//                 processedValues.yellowgoal_exists == 0)) {
+//         CameraPosition = {localizeWithDefensiveGoal().x(),
+//                           localizeWithDefensiveGoal().y()};
+//     } else {
+//         CameraPosition = {localizeWithBothGoals().x(),
+//                           localizeWithBothGoals().y()};
+//     }
 
     
-    if (processedValues.relativeBearing < 20 &&
-        processedValues.relativeBearing > -20){
+//     if (processedValues.relativeBearing < 20 &&
+//         processedValues.relativeBearing > -20){
 
-        // check reliability of lidar from total distance in x and y direction
-            if ((x_leftrelativetofield + x_rightrelativetofield) >
-                WIDTH_OF_FIELD - WIDTH_ERROR &&
-                (x_leftrelativetofield + x_rightrelativetofield) <
-                WIDTH_OF_FIELD + WIDTH_ERROR) {
+//         // check reliability of lidar from total distance in x and y direction
+//             if ((x_leftrelativetofield + x_rightrelativetofield) >
+//                 WIDTH_OF_FIELD - WIDTH_ERROR &&
+//                 (x_leftrelativetofield + x_rightrelativetofield) <
+//                 WIDTH_OF_FIELD + WIDTH_ERROR) {
 
-            processedValues.lidarConfidence[1] = 1;
-            processedValues.lidarConfidence[3] = 1;
-            processedValues.past_true_x_left = x_leftrelativetofield;
-            processedValues.past_true_x_right = x_rightrelativetofield;
-        } else {
-            // check x_left reliabiity
-            if ((x_leftrelativetofield > processedValues.past_true_x_left -
-                5) &&
-                (x_leftrelativetofield < processedValues.past_true_x_left +
-                5)) {
-                processedValues.lidarConfidence[1] = 1;
-                processedValues.past_true_x_left = x_leftrelativetofield;
-            } else {
-                processedValues.lidarConfidence[1] = 0;
-            }
-            // check x_right reliability
-            if ((x_rightrelativetofield > processedValues.past_true_x_right -
-                5) &&
-                (x_rightrelativetofield < processedValues.past_true_x_right +
-                5)) {
-                processedValues.lidarConfidence[3] = 1;
-                processedValues.past_true_x_right = x_rightrelativetofield;
-            } else {
-                processedValues.lidarConfidence[3] = 0;
-            }
-        }
+//             processedValues.lidarConfidence[1] = 1;
+//             processedValues.lidarConfidence[3] = 1;
+//             processedValues.past_true_x_left = x_leftrelativetofield;
+//             processedValues.past_true_x_right = x_rightrelativetofield;
+//         } else {
+//             // check x_left reliabiity
+//             if ((x_leftrelativetofield > processedValues.past_true_x_left -
+//                 5) &&
+//                 (x_leftrelativetofield < processedValues.past_true_x_left +
+//                 5)) {
+//                 processedValues.lidarConfidence[1] = 1;
+//                 processedValues.past_true_x_left = x_leftrelativetofield;
+//             } else {
+//                 processedValues.lidarConfidence[1] = 0;
+//             }
+//             // check x_right reliability
+//             if ((x_rightrelativetofield > processedValues.past_true_x_right -
+//                 5) &&
+//                 (x_rightrelativetofield < processedValues.past_true_x_right +
+//                 5)) {
+//                 processedValues.lidarConfidence[3] = 1;
+//                 processedValues.past_true_x_right = x_rightrelativetofield;
+//             } else {
+//                 processedValues.lidarConfidence[3] = 0;
+//             }
+//         }
 
-        if ((y_backrelativetofield + y_frontrelativetofield) >
-                LENGTH_OF_FIELD - LENGTH_ERROR &&
-            (y_backrelativetofield + y_frontrelativetofield) <
-                LENGTH_OF_FIELD + LENGTH_ERROR) {
+//         if ((y_backrelativetofield + y_frontrelativetofield) >
+//                 LENGTH_OF_FIELD - LENGTH_ERROR &&
+//             (y_backrelativetofield + y_frontrelativetofield) <
+//                 LENGTH_OF_FIELD + LENGTH_ERROR) {
             
-            processedValues.lidarConfidence[0] = 1;
-            processedValues.lidarConfidence[2] = 1;
-        } else {
-            // check y_front reliabiity
-            if ((y_frontrelativetofield > processedValues.past_true_y_front -
-                5) &&
-                (x_leftrelativetofield < processedValues.past_true_y_front +
-                5)) {
-                processedValues.lidarConfidence[0] = 1;
-                processedValues.past_true_y_front = y_frontrelativetofield;
-            } else {
-                processedValues.lidarConfidence[0] = 0;
-            }
-            // check y_back reliability
-            if ((y_backrelativetofield > processedValues.past_true_y_back -
-                5) &&
-                (y_backrelativetofield < processedValues.past_true_y_back +
-                5)) {
-                processedValues.lidarConfidence[2] = 1;
-                processedValues.past_true_y_back = y_backrelativetofield;
-            } else {
-                processedValues.lidarConfidence[2] = 0;
-            }
-    }
-    }
+//             processedValues.lidarConfidence[0] = 1;
+//             processedValues.lidarConfidence[2] = 1;
+//         } else {
+//             // check y_front reliabiity
+//             if ((y_frontrelativetofield > processedValues.past_true_y_front -
+//                 5) &&
+//                 (x_leftrelativetofield < processedValues.past_true_y_front +
+//                 5)) {
+//                 processedValues.lidarConfidence[0] = 1;
+//                 processedValues.past_true_y_front = y_frontrelativetofield;
+//             } else {
+//                 processedValues.lidarConfidence[0] = 0;
+//             }
+//             // check y_back reliability
+//             if ((y_backrelativetofield > processedValues.past_true_y_back -
+//                 5) &&
+//                 (y_backrelativetofield < processedValues.past_true_y_back +
+//                 5)) {
+//                 processedValues.lidarConfidence[2] = 1;
+//                 processedValues.past_true_y_back = y_backrelativetofield;
+//             } else {
+//                 processedValues.lidarConfidence[2] = 0;
+//             }
+//     }
+//     }
 
 #ifdef DEBUG_PROCESS_LIDARS
     const auto printSerial = [](double value) {
@@ -257,4 +257,3 @@ void processLidars() {
     Serial.println(" | ");
 
 #endif
-}

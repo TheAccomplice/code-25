@@ -2,11 +2,14 @@
 #include <PacketSerial.h>
 #include "util.h"
 #include "main.h"
+#include "shared.h"
 
 PacketSerial TeensyTeensySerial;
+PacketSerial ESPSerial;
 Point goalPos = {61.5, 0};
 Point receivedBallPos;  
 Point receivedBotPos;   
+SensorValues1 sensorValues1;
 
 
 //CONFIG ******************
@@ -17,29 +20,30 @@ Point receivedBotPos;
 #define DEGREE_MULTIPLIER 20
 //*************** */
 
-struct ProcessedValues {
-    //relative to robot
-    Vector ball_relativeposition;
-    Vector yellowgoal_relativeposition;
-    Vector bluegoal_relativeposition;
-    //relative to field
-    Vector ball_actualposition;
-    Vector yellowgoal_actualposition;
-    Vector bluegoal_actualposition;
+// struct ProcessedValues {
+//     //relative to robot
+//     Vector ball_relativeposition;
+//     Vector yellowgoal_relativeposition;
+//     Vector bluegoal_relativeposition;
+//     //relative to field, not used?
+//     Vector ball_actualposition;
+//     Vector yellowgoal_actualposition;
+//     Vector bluegoal_actualposition;
 
-    int ballExists = 0;
-    int yellowgoal_exists = 0;
-    int bluegoal_exists = 0;
-    int lidarDistance[4];
-    double lidarConfidence[4];
-    double bearing_relative_to_field;
-    Point robot_position;
-    int is_ball_in_catchment = 0;
-    int onLine = 0;
-    float angleBisector;
-    float depthinLine;
-    double depth_in_line;
-};
+//     int ballExists = 0;
+//     int yellowgoal_exists = 0;
+//     int bluegoal_exists = 0;
+//     int lidarDistance[4];
+//     double lidarConfidence[4];
+//     double bearing_relative_to_field;
+//     int relativeBearing;
+//     Point robot_position;
+//     int is_ball_in_catchment = 0;
+//     int onLine = 0;
+//     float angleBisector;
+//     float depthinLine;
+//     double depth_in_line;
+// };
 
 ProcessedValues processedValues;
 Movement movement; // need to define this in .cpp file
@@ -85,7 +89,7 @@ double curveAroundBallMultiplier(double angle, double actual_distance,
 }
 
 void movetoPoint(Point destination) {
-    Vector localisation = Vector::fromPoint(processedValues.robot_position);
+    Vector localisation = processedValues.robot_position;
     double distance = (localisation - Vector::fromPoint(destination)).distance;
     movement.setConstantVelocity(Velocity::Constant{
         movement.applySigmoid(400, 250, (distance) / 20, 0.9)});
@@ -93,16 +97,62 @@ void movetoPoint(Point destination) {
         Direction::MoveToPoint{localisation, destination});
 }
 
-void receiveTxData(const byte *buf, size_t size) {
+int onLine = 0;
+void receiveEspData(const byte *buf, size_t size) {
     // load payload
-    if (size != sizeof(processedValues)) {
-        Serial.print("Invalid data, size: ");
+    if (size != sizeof(onLine)) {
+        Serial.print("Invalid esp data, expect: ");
+        Serial.print(sizeof(onLine));
+        Serial.print(", got: ");
         Serial.print(size);
         Serial.println("");
         return;
     }
 
+    memcpy(&onLine, buf, sizeof(onLine));
+    Serial.print("On line: ");
+    Serial.println(onLine);
+}
+
+void receiveTxData(const byte *buf, size_t size) {
+    // load payload
+    if (size != sizeof(processedValues)) {
+        Serial.print("Invalid data, expect: ");
+        Serial.print(sizeof(processedValues));
+        Serial.print(", got: ");
+        Serial.print(size);
+        Serial.println("");
+        return;
+    }
     memcpy(&processedValues, buf, sizeof(processedValues));
+
+    // Serial.print("Ball distance: ");
+    // printDouble(Serial, processedValues.ball_relativeposition.distance, 3, 1);
+    // Serial.println("");
+
+}
+
+
+
+void setup() {
+    Serial.begin(115200); 
+    Serial1.begin(115200);
+    Serial2.begin(115200);
+    Serial3.begin(115200);
+    Serial5.begin(115200);
+
+    TeensyTeensySerial.setStream(&Serial1);
+    TeensyTeensySerial.setPacketHandler(&receiveTxData);
+
+    ESPSerial.setStream(&Serial5);
+    ESPSerial.setPacketHandler(&receiveEspData);
+
+    movement.initialize();
+}
+
+void loop() {
+    TeensyTeensySerial.update();
+    ESPSerial.update();
 
     //global bearing 
     double bearing = 0; //for now
@@ -136,9 +186,9 @@ void receiveTxData(const byte *buf, size_t size) {
         movement.setConstantDirection(Direction::Constant{
                 ballAngleOffset(processedValues.ball_relativeposition.distance,
                                 processedValues.ball_relativeposition.angle) +
-                                processedValues.ball_relativeposition.angle});
-        movement.setConstantVelocity(
-                Velocity::Constant{movement.applySigmoid(
+                                processedValues.ball_relativeposition.angle})
+        movement.setconstantVelocity(
+                Velocity::constant{movement.applySigmoid(
                 500, 300,
                 curveAroundBallMultiplier(
                     processedValues.ball_relativeposition.angle,
@@ -157,21 +207,22 @@ void receiveTxData(const byte *buf, size_t size) {
     movement.drive(processedValues.robot_position);
 }
 
-}
+    // Serial.print("On line: ");
+    // Serial.print(onLine);
+    // Serial.print(" | ");
+    // Serial.print("Ball distance: ");
+    // printDouble(Serial, processedValues.ball_relativeposition.distance, 3, 1);
+    // // Serial.print(" | ");
+    // // Serial.print("Ball angle: ");
+    // // printDouble(Serial, processedValues.ball_relativeposition.angle, 3, 1);
+    // Serial.print(" | ");
+    // Serial.print("Bearing: ");
+    // printDouble(Serial, processedValues.relativeBearing, 3, 1);
+    // Serial.print(" | ");
+    // Serial.print("Blue goal: ");
+    // printDouble(Serial, processedValues.bluegoal_relativeposition.distance, 3, 1);
+    // Serial.println("");
 
-void setup() {
-    Serial.begin(115200); 
-    Serial1.begin(115200);
-    Serial2.begin(115200);
-    Serial3.begin(115200);
 
-    TeensyTeensySerial.setStream(&Serial1);
-    TeensyTeensySerial.setPacketHandler(&receiveTxData);
 
-    movement.initialize();
-}
-
-void loop() {
-    TeensyTeensySerial.update();
-}
     

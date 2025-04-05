@@ -63,6 +63,7 @@ void findLine() {
     // Identify the two highest values
     for (int i = 0; i < LDRPINCOUNT; i++) {
         if (lightArray.RAWLDRVALUES[i] > lightArray.LDRThresholds[i]) {
+            whiteAvg[i].push(lightArray.RAWLDRVALUES[i]);
             if (lightArray.RAWLDRVALUES[i] > maxLDR1) {
                 maxLDR2 = maxLDR1;
                 maxIndex2 = maxIndex1;
@@ -72,7 +73,10 @@ void findLine() {
                 maxLDR2 = lightArray.RAWLDRVALUES[i];
                 maxIndex2 = i;
             }
+        } else {
+            greenAvg[i].push(lightArray.RAWLDRVALUES[i]);
         }
+        //lightArray.LDRThresholds[i] = (whiteAvg[i].get_avg() + greenAvg[i].get_avg()) / 2;
     }
 
     // No line detected
@@ -98,4 +102,21 @@ void findLine() {
         sensorValues1.angleBisector = lightArray.LDRBearings[maxIndex1];
         sensorValues1.depthinLine = 0;
     }
+
+    Serial.print(maxIndex1);
+    Serial.print(": ");
+    Serial.print(lightArray.RAWLDRVALUES[maxIndex1]);
+    Serial.print(" | ");
+    Serial.print("T: ");
+    Serial.print(lightArray.LDRThresholds[maxIndex1]);
+    Serial.print(maxIndex2);
+    Serial.print(": ");
+    Serial.print(lightArray.RAWLDRVALUES[maxIndex2]);
+    Serial.print(" | ");
+    Serial.print("T: ");
+    Serial.print(lightArray.LDRThresholds[maxIndex2]);
+    Serial.print(" | ");
+    Serial.print("On Line: ");
+    Serial.println(sensorValues1.onLine);
+
 }

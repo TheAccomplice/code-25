@@ -28,8 +28,8 @@ struct LightArray {
         180.0, 204.0, 228.0, 252.0, 276.0, 300.0, 324.0, 348.0, 12.0, 36.0, 
         60.0, 84.0, 108.0, 132.0, 156.0}; // assuming placement of ldrs is constant
     
-    float LDRThresholds[LDRPINCOUNT] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  
-                                        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};    
+    const float LDRThresholds[LDRPINCOUNT] = {2000.0, 2000.0, 2000.0, 2000.0, 2000.0, 2000.0, 2000.0, 2000.0,  
+                                        2000.0, 2000.0, 2000.0, 2000.0, 2000.0, 2000.0, 2000.0};    
                                         //assumes threshold is measured
 
     double maxRecordedValue[LDRPINCOUNT] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  

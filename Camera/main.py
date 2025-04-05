@@ -69,8 +69,8 @@ kf = KalmanFilter(F=F, B=B, H=H, Q=Q, R=R)
 
 
 
-#setting = 'home'
-setting = 'lab'
+setting = 'home'
+#setting = 'lab'
 
 
 sensor.reset()
@@ -132,7 +132,7 @@ if ID == 'robot2':
         yellow_thresh = [(0, 100, -11, 13, 20, 70)]
 
     elif (setting == 'home'):
-        red_thresh = [(28, 72, 19, 127, 7, 36)]
+        red_thresh = [(29, 95, 14, 88, 20, 127)]
         blue_thresh = [(17, 47, -19, 27, -43, -1)]
         yellow_thresh = [(28, 53, -19, 14, 18, 57)]
 
