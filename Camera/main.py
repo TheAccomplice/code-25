@@ -69,8 +69,8 @@ kf = KalmanFilter(F=F, B=B, H=H, Q=Q, R=R)
 
 
 
-setting = 'home'
-#setting = 'lab'
+#setting = 'home'
+setting = 'lab'
 
 
 sensor.reset()

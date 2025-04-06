@@ -11,6 +11,19 @@ Point receivedBallPos;
 Point receivedBotPos;   
 SensorValues1 sensorValues1;
 
+#define FL_PWM_PIN 18
+#define FL_INA_PIN 19
+#define FL_INB_PIN 17
+#define BL_PWM_PIN 14
+#define BL_INA_PIN 13
+#define BL_INB_PIN 15
+#define FR_PWM_PIN 6 
+#define FR_INA_PIN 9 //fr check direction
+#define FR_INB_PIN 5
+#define BR_PWM_PIN 11
+#define BR_INB_PIN 10
+#define BR_INA_PIN 12
+
 
 //CONFIG ******************
 // Ball Cruve Settings
@@ -133,6 +146,65 @@ void receiveTxData(const byte *buf, size_t size) {
 
 }
 
+    void moveleft(int speed){
+      digitalWrite(FL_INA_PIN, LOW);
+      digitalWrite(FL_INB_PIN, HIGH);
+      digitalWrite(FR_INA_PIN, LOW);
+      digitalWrite(FR_INB_PIN, HIGH);
+      digitalWrite(BL_INA_PIN, HIGH);
+      digitalWrite(BL_INB_PIN, LOW);
+      digitalWrite(BR_INA_PIN, LOW);
+      digitalWrite(BR_INB_PIN, HIGH);
+      analogWrite(FL_PWM_PIN, speed);
+      analogWrite(FR_PWM_PIN, speed);
+      analogWrite(BL_PWM_PIN, speed);
+      analogWrite(BR_PWM_PIN, speed);
+  }
+
+  void moveright(int speed){
+      digitalWrite(FL_INA_PIN, HIGH);
+      digitalWrite(FL_INB_PIN, LOW);
+      digitalWrite(FR_INA_PIN, HIGH);
+      digitalWrite(FR_INB_PIN, LOW);
+      digitalWrite(BL_INA_PIN, LOW);
+      digitalWrite(BL_INB_PIN, HIGH);
+      digitalWrite(BR_INA_PIN, HIGH);
+      digitalWrite(BR_INB_PIN, LOW);
+      analogWrite(FL_PWM_PIN, speed);
+      analogWrite(FR_PWM_PIN, speed);
+      analogWrite(BL_PWM_PIN, speed);
+      analogWrite(BR_PWM_PIN, speed);
+  }
+
+  void moveforward(int speed){
+      digitalWrite(FL_INA_PIN, HIGH);
+      digitalWrite(FL_INB_PIN, LOW);
+      digitalWrite(FR_INA_PIN, HIGH);
+      digitalWrite(FR_INB_PIN, LOW);
+      digitalWrite(BL_INA_PIN, HIGH);
+      digitalWrite(BL_INB_PIN, LOW);
+      digitalWrite(BR_INA_PIN, HIGH);
+      digitalWrite(BR_INB_PIN, LOW);
+      analogWrite(FL_PWM_PIN, speed);
+      analogWrite(FR_PWM_PIN, speed);
+      analogWrite(BL_PWM_PIN, speed);
+      analogWrite(BR_PWM_PIN, speed);
+  }
+
+  void movebackward(int speed){
+      digitalWrite(FL_INA_PIN, LOW);
+      digitalWrite(FL_INB_PIN, HIGH);
+      digitalWrite(FR_INA_PIN, LOW);
+      digitalWrite(FR_INB_PIN, HIGH);
+      digitalWrite(BL_INA_PIN, LOW);
+      digitalWrite(BL_INB_PIN, HIGH);
+      digitalWrite(BR_INA_PIN, LOW);
+      digitalWrite(BR_INB_PIN, HIGH);
+      analogWriteFrequency(FL_PWM_PIN, speed);
+      analogWriteFrequency(FR_PWM_PIN, speed);
+      analogWriteFrequency(BL_PWM_PIN, speed);
+      analogWriteFrequency(BR_PWM_PIN, speed);
+  }
 
 
 void setup() {
@@ -178,39 +250,52 @@ void loop() {
     // Case 2.0: ball in catchment area, zoom towards goal
     else if (processedValues.is_ball_in_catchment == 1){
         //does yellow goal exist? If yes
-        if (processedValues.bluegoal_exists == 1){
-            movement.setConstantDirection(Direction::Constant{processedValues.bluegoal_relativeposition.angle});
+        if (processedValues.yellowgoal_exists == 1){
+            movement.setConstantDirection(Direction::Constant{processedValues.yellowgoal_relativeposition.angle});
             movement.setConstantVelocity(Velocity::Constant{400});
             movement.setConstantBearing(Bearing::Constant{bearing});
         }
         //if blue goal does not exist, then move to point (0,120), which is opponent goal
-        else if (processedValues.bluegoal_exists == 0){
+        else if (processedValues.yellowgoal_exists == 0){
             //gg
             movetoPoint({0,120});
 
         }
     }
     // Case 3.0: ball exists but not in catchment area. G towards ball
-    else if (processedValues.ballExists == 1 && processedValues.is_ball_in_catchment == 0){
-        movement.setConstantVelocity(Velocity::Constant{movement.applySigmoid(
-            1000, 300,
-            processedValues.ball_relativeposition.distance / 20, 2.5)});
-        //movement.setConstantBearing(Bearing::Constant{processedValues.relativeBearing}); //??
+    else if (processedValues.ballExists == 1){
+        // if (processedValues.ball_relativeposition.angle > 10){
+        //     moveright(64);
+        // }
+        // else if (processedValues.ball_relativeposition.angle < 0){
+        //     moveleft(64);
+        // }
+        // else{
+        //     analogWrite(FL_PWM_PIN, 0);
+        //     analogWrite(FR_PWM_PIN, 0);
+        //     analogWrite(BL_PWM_PIN, 0);
+        //     analogWrite(BR_PWM_PIN, 0);
+        // }
+        // movement.setConstantVelocity(Velocity::Constant{movement.applySigmoid(
+        //     700, 200,
+        //     processedValues.ball_relativeposition.distance / 20, 0.9)});
+        // movement.setConstantBearing(Bearing::Constant{0}); //??
         
+
         // curve towards ball
-        // movement.setConstantDirection(Direction::Constant{
-        //         ballAngleOffset(processedValues.ball_relativeposition.distance,
-        //                         processedValues.ball_relativeposition.angle) +
-        //                         processedValues.ball_relativeposition.angle})
-        // movement.setconstantVelocity(
-        //         Velocity::constant{movement.applySigmoid(
-        //         500, 300,
-        //         curveAroundBallMultiplier(
-        //             processedValues.ball_relativeposition.angle,
-        //             processedValues.ball_relativeposition.distance - 20,
-        //             70 - 20),
-        //         2.5)});
-        // movement.setConstantBearing(Bearing::Constant{bearing});
+        movement.setConstantDirection(Direction::Constant{
+                ballAngleOffset(processedValues.ball_relativeposition.distance,
+                                processedValues.ball_relativeposition.angle) +
+                                processedValues.ball_relativeposition.angle});
+        movement.setConstantVelocity(
+                Velocity::Constant{movement.applySigmoid(
+                700, 300,
+                curveAroundBallMultiplier(
+                    processedValues.ball_relativeposition.angle,
+                    processedValues.ball_relativeposition.distance - 20,
+                    70 - 20),
+                2.5)});
+        movement.setConstantBearing(Bearing::Constant{bearing});
     }
     else if (processedValues.yellowgoal_exists == 1){
         movement.setConstantDirection(Direction::Constant{processedValues.yellowgoal_relativeposition.angle});
@@ -226,6 +311,8 @@ void loop() {
     //drive code
     movement.drive(processedValues.robot_position.toPoint());
 }
+
+
 
     // Serial.print("On line: ");
     // Serial.print(onLine);
